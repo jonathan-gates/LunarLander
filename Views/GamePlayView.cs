@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -12,9 +13,9 @@ namespace CS5410
     {
         private BasicEffect m_effect;
         private SpriteFont m_font;
-        private const string MESSAGE = "Isn't this game fun!";
         private Random m_random = new Random();
         private VertexPositionColor[] m_vertsLineStrip;
+        VertexPositionColor[] verticesToDraw;
 
         public override void loadContent(ContentManager contentManager)
         {
@@ -48,13 +49,6 @@ namespace CS5410
 
         public override void render(GameTime gameTime)
         {
-            m_spriteBatch.Begin();
-
-            Vector2 stringSize = m_font.MeasureString(MESSAGE);
-            m_spriteBatch.DrawString(m_font, MESSAGE,
-                new Vector2(m_graphics.PreferredBackBufferWidth / 2 - stringSize.X / 2, m_graphics.PreferredBackBufferHeight / 2 - stringSize.Y), Color.Yellow);
-
-            m_spriteBatch.End();
             Draw();
         }
 
@@ -68,7 +62,7 @@ namespace CS5410
 
             List<Vector3> points = new List<Vector3>();
 
-            int yStartRange = (int)(m_graphics.PreferredBackBufferHeight - m_graphics.PreferredBackBufferHeight * 0.75);
+            int yStartRange = (int)(m_graphics.PreferredBackBufferHeight - m_graphics.PreferredBackBufferHeight * 0.60);
             int yEndRange = (int)(m_graphics.PreferredBackBufferHeight * 0.75);
             int xLeftSafeZone = m_graphics.PreferredBackBufferWidth - (int)(m_graphics.PreferredBackBufferWidth * 0.85);
             int xRightSafeZone = (int)(m_graphics.PreferredBackBufferWidth * 0.85);
@@ -106,7 +100,7 @@ namespace CS5410
             if (leftSpace > rightSpace)
             {
                 startLine = new Line(
-                    new Vector3(0, m_graphics.PreferredBackBufferHeight / 2, 0),
+                    new Vector3(0, m_random.Next(yStartRange, yEndRange), 0),
                     new Vector3(secondSafeZoneX, secondSafeZoneY, 0),
                     false);
                 firstSafeLine = new Line(
@@ -123,7 +117,7 @@ namespace CS5410
                     true);
                 lastLine = new Line(
                     new Vector3(firstSafeZoneX + SAFE_ZONE_LENGTH, firstSafeZoneY, 0),
-                    new Vector3(m_graphics.PreferredBackBufferWidth, m_graphics.PreferredBackBufferHeight / 2, 0),
+                    new Vector3(m_graphics.PreferredBackBufferWidth, m_random.Next(yStartRange, yEndRange), 0),
                     false);
             }
             else
@@ -171,6 +165,34 @@ namespace CS5410
 
             MidpointDisplacement(lines);
 
+            List<VertexPositionColor> triangleVertices = new List<VertexPositionColor>();
+            Color fillColor = Color.Black; // The color to fill the area with
+
+            for (int i = 0; i < m_vertsLineStrip.Length - 1; i++)
+            {
+                // Current and next point in the line strip
+                Vector3 currentPoint = m_vertsLineStrip[i].Position;
+                Vector3 nextPoint = m_vertsLineStrip[i + 1].Position;
+
+                // Corresponding points on the base line
+                Vector3 currentBasePoint = new Vector3(currentPoint.X, m_graphics.PreferredBackBufferHeight, currentPoint.Z);
+                Vector3 nextBasePoint = new Vector3(nextPoint.X, m_graphics.PreferredBackBufferHeight, nextPoint.Z);
+
+                // Create two triangles to fill the area under the segment
+                // Triangle 1
+                triangleVertices.Add(new VertexPositionColor(currentPoint, fillColor));
+                triangleVertices.Add(new VertexPositionColor(nextPoint, fillColor));
+                triangleVertices.Add(new VertexPositionColor(currentBasePoint, fillColor));
+
+                // Triangle 2
+                triangleVertices.Add(new VertexPositionColor(nextPoint, fillColor));
+                triangleVertices.Add(new VertexPositionColor(nextBasePoint, fillColor));
+                triangleVertices.Add(new VertexPositionColor(currentBasePoint, fillColor));
+            }
+
+            // Convert the list to an array for drawing
+            verticesToDraw = triangleVertices.ToArray();
+
         }
 
         private double GaussianRandomNumber()
@@ -184,8 +206,8 @@ namespace CS5410
 
         private void MidpointDisplacement(Lines lines)
         {
-            const int N_LEVELS = 7;
-            float s = 2.0f;
+            const int N_LEVELS = 8;
+            float s = 2f;
             Lines temp_lines = new Lines(lines);
             for (int i = 0; i < N_LEVELS; i++)
             {
@@ -198,7 +220,7 @@ namespace CS5410
                         double r = s * GaussianRandomNumber() * (int)(Math.Abs(line.endingPosition.X - line.startingPosition.X));
                         int y = (int)(0.5 * (line.startingPosition.Y + line.endingPosition.Y) + r);
                         y = Math.Min(y, m_graphics.PreferredBackBufferHeight - 1);
-                        y = Math.Max(y, (int)(m_graphics.PreferredBackBufferHeight * 0.25));
+                        y = Math.Max(y, (int)(m_graphics.PreferredBackBufferHeight * 0.30));
 
                         Line line1 = new Line(
                             new Vector3(line.startingPosition.X, line.startingPosition.Y, 0),
@@ -215,30 +237,33 @@ namespace CS5410
                     }
                 }
                 lines = new Lines(temp_lines);
-                s -= 0.5f;
+                s *= 0.65f;
             }
             m_vertsLineStrip = lines.getPointsLines();
         }
 
         public void Draw()
         {
-            //m_graphics.GraphicsDevice.RasterizerState = new RasterizerState
-            //{
-            //    FillMode = FillMode.Solid,
-            //    CullMode = CullMode.CullCounterClockwiseFace,   // CullMode.None If you want to not worry about triangle winding order
-            //    MultiSampleAntiAlias = true,
-            //};
-
             foreach (EffectPass pass in m_effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
+
+                m_graphics.GraphicsDevice.DrawUserPrimitives(
+                    PrimitiveType.TriangleList,
+                    verticesToDraw,
+                    0,
+                    verticesToDraw.Length / 3); // The number of triangles is the number of vertices divided by 3
+
                 // Draw the line segments
                 m_graphics.GraphicsDevice.DrawUserPrimitives(
                 PrimitiveType.LineStrip,
                 m_vertsLineStrip,
                 0,
                 m_vertsLineStrip.Length - 1);
+
+                
             }
+
         }
 
         public class Lines
@@ -276,12 +301,14 @@ namespace CS5410
                 VertexPositionColor[] points = new VertexPositionColor[m_lines.Count * 2];
                 int i = 0;
 
+                Color landingColor = Color.Red;
+
                 foreach (Line line in m_lines)
                 {
                     points[i].Position = line.startingPosition;
                     if (line.is_safe_zone)
                     {
-                        points[i].Color = Color.Red;
+                        points[i].Color = landingColor;
                     }
                     else 
                     {
@@ -291,7 +318,7 @@ namespace CS5410
                     points[i+1].Position = line.endingPosition;
                     if (line.is_safe_zone)
                     {
-                        points[i+1].Color = Color.Red;
+                        points[i+1].Color = landingColor;
                     }
                     else
                     {
