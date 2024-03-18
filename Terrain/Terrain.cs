@@ -212,7 +212,7 @@ namespace LunarLander.Terrain
 
         private void MidpointDisplacement(Lines lines)
         {
-            const int N_LEVELS = 8;
+            const int N_LEVELS = 6;
             float s = 2f;
             Lines temp_lines = new Lines(lines);
             for (int i = 0; i < N_LEVELS; i++)
@@ -243,7 +243,7 @@ namespace LunarLander.Terrain
                     }
                 }
                 lines = new Lines(temp_lines);
-                s *= 0.65f;
+                s *= 0.59f;
             }
             m_vertsLineStrip = lines.getPointsLines();
             m_lines = lines.m_lines;

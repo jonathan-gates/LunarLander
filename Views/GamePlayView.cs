@@ -131,7 +131,7 @@ namespace CS5410
             float shipHeight = m_texShip.Height; // Assuming shipTexture is your ship's texture
             float scale = (screenHeight * shipScaleFactor) / shipHeight;
             m_ship = new Ship(new Vector2(50, 50), new Vector2(0, 0), new Vector2(1, 0), scale);
-            m_terrain.GenerateTerrain(scale, false);
+            m_terrain.GenerateTerrain(scale, true);
         }
 
     }
