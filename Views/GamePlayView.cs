@@ -26,23 +26,17 @@ namespace CS5410
 
             m_terrain = new Terrain(m_graphics, m_random);
 
-            m_terrain.GenerateTerrain();
-
             m_texShip = contentManager.Load<Texture2D>("Images/rocket");
             m_texCircle = contentManager.Load<Texture2D>("Images/circle");
 
-            float shipScaleFactor = 0.1f; // Example: Ship size = 10% of screen height
-            int screenHeight = m_graphics.GraphicsDevice.Viewport.Height; // Assuming you have access to GraphicsDevice or similar
-            float shipHeight = m_texShip.Height; // Assuming shipTexture is your ship's texture
-            float scale = (screenHeight * shipScaleFactor) / shipHeight;
-            m_ship = new Ship(new Vector2(50, 50), new Vector2(0, 0), new Vector2(1, 0), scale);
-
+            resetGameState();
         }
 
         public override GameStateEnum processInput(GameTime gameTime)
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
+                resetGameState();
 
                 return GameStateEnum.MainMenu;
             }
@@ -96,8 +90,8 @@ namespace CS5410
         public override void update(GameTime gameTime)
         {
             m_ship.Update(gameTime);
-            state = "";
             // TODO: remove test colide
+            state = "";
             if (m_ship.LineIntersectsCircle(new Vector2(100, 100), new Vector2(200, 200)))
             {
                 
@@ -128,6 +122,16 @@ namespace CS5410
                     }
                 }
             }
+        }
+
+        private void resetGameState()
+        {
+            m_terrain.GenerateTerrain();
+            float shipScaleFactor = 0.1f; // Example: Ship size = 10% of screen height
+            int screenHeight = m_graphics.GraphicsDevice.Viewport.Height; // Assuming you have access to GraphicsDevice or similar
+            float shipHeight = m_texShip.Height; // Assuming shipTexture is your ship's texture
+            float scale = (screenHeight * shipScaleFactor) / shipHeight;
+            m_ship = new Ship(new Vector2(50, 50), new Vector2(0, 0), new Vector2(1, 0), scale);
         }
 
     }
