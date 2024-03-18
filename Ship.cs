@@ -14,17 +14,19 @@ namespace LunarLander
         public Vector2 position { get; private set; }
         public Vector2 velocity { get; private set; }
         public Vector2 direction { get; private set; }
+        public  float radius { get; private set; }
         private KeyboardInput m_inputKeyboard;
-        private bool controlable;
         private const float gravity = 6f;
         private const float thrustAmount = 15.0f;
+        public float fuel = 20000.0f;
+        public bool isDead;
 
-        public Ship(Vector2 position, Vector2 velocity, Vector2 direction, bool controlable) 
+        public Ship(Vector2 position, Vector2 velocity, Vector2 direction, float radius) 
         { 
             this.position = position;
             this.velocity = velocity;
             this.direction = direction;
-            this.controlable = controlable;
+            this.radius = radius;
 
             m_inputKeyboard = new KeyboardInput();
 
@@ -38,28 +40,25 @@ namespace LunarLander
         {
             m_inputKeyboard.Update(gameTime);
 
-            addGravity(gameTime);
+            //addGravity(gameTime);
             updatePosition(gameTime);
         }
 
         private void addGravity(GameTime gameTime)
         {
-            if (!controlable) return;
-
             velocity += new Vector2(0, gravity * (float)(gameTime.ElapsedGameTime.TotalMilliseconds) / 1000.0f);
         }
 
         private void thrust(GameTime gameTime, float scale) 
         {
-            if (!controlable) return;
+            if (isDead || fuel <= 0) return;
 
             velocity += Vector2.Normalize(direction) * thrustAmount * (float)(gameTime.ElapsedGameTime.TotalMilliseconds) / 1000.0f;
+            fuel -= (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
 
         private void rotateLeft(GameTime gameTime, float scale)
         {
-            if (!controlable) return;
-
             float rotationAngle = scale * (float)(gameTime.ElapsedGameTime.TotalMilliseconds / 1000.0);
             float cosTheta = (float)Math.Cos(rotationAngle);
             float sinTheta = (float)Math.Sin(rotationAngle);
@@ -74,8 +73,6 @@ namespace LunarLander
 
         private void rotateRight(GameTime gameTime, float scale)
         {
-            if (!controlable) return;
-
             float rotationAngle = scale * (float)(gameTime.ElapsedGameTime.TotalMilliseconds / 1000.0);
             float cosTheta = (float)Math.Cos(rotationAngle);
             float sinTheta = (float)Math.Sin(rotationAngle);
@@ -90,9 +87,29 @@ namespace LunarLander
 
         private void updatePosition(GameTime gameTime)
         {
-            if (!controlable) return;
-
             position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+        }
+
+        public bool LineIntersectsCircle(Vector2 pt1, Vector2 pt2)
+        {
+            Vector2 v1 = pt2 - pt1;
+            Vector2 v2 = pt1 - this.position; // Use the ship's position as the circle's center
+            float b = -2 * (v1.X * v2.X + v1.Y * v2.Y);
+            float c = 2 * (v1.X * v1.X + v1.Y * v1.Y);
+            float dSquared = b * b - 2 * c * (v2.X * v2.X + v2.Y * v2.Y - this.radius * this.radius);
+
+            if (dSquared < 0) // No intersection
+            {
+                return false;
+            }
+
+            float d = (float)Math.Sqrt(dSquared);
+
+            // These represent the unit distance of point one and two on the line
+            float u1 = (b - d) / c;
+            float u2 = (b + d) / c;
+
+            return (u1 <= 1 && u1 >= 0) || (u2 <= 1 && u2 >= 0); // If point on the line segment
         }
     }
 }

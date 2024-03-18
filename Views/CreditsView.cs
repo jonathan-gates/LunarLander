@@ -9,6 +9,7 @@ namespace CS5410
     {
         private SpriteFont m_font;
         private const string MESSAGE = "Credits View";
+        // ship texture https://opengameart.org/content/rocket
 
         public override void loadContent(ContentManager contentManager)
         {
