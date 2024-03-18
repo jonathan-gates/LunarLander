@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LunarLander;
+using Maze.Input;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -14,6 +16,8 @@ namespace CS5410
         private BasicEffect m_effect;
         private SpriteFont m_font;
         private Random m_random = new Random();
+        private Ship m_ship; // https://opengameart.org/content/rocket
+        private Texture2D m_texShip;
         private VertexPositionColor[] m_vertsLineStrip;
         VertexPositionColor[] verticesToDraw;
 
@@ -33,6 +37,10 @@ namespace CS5410
 
             GenerateTerrain();
 
+            m_texShip = contentManager.Load<Texture2D>("Images/rocket");
+
+            m_ship = new Ship(new Vector2(50, 50), new Vector2(0, 0), new Vector2(1, 0), false);
+
         }
 
         public override GameStateEnum processInput(GameTime gameTime)
@@ -50,16 +58,35 @@ namespace CS5410
         public override void render(GameTime gameTime)
         {
             Draw();
+            m_spriteBatch.Begin();
+
+            float rotationAngle = (float)Math.Atan2(m_ship.direction.Y, m_ship.direction.X);
+            Vector2 origin = new Vector2(m_texShip.Width / 2f, m_texShip.Height / 2f);
+            m_spriteBatch.Draw(
+                m_texShip, 
+                new Vector2(m_ship.position.X, m_ship.position.Y),
+                null, 
+                Color.White, 
+                rotationAngle, 
+                origin, 
+                0.5f, 
+                SpriteEffects.None, 
+                0f);
+
+            string velocityText = $"Velocity: {m_ship.velocity.X:F2}, {m_ship.velocity.Y:F2}";
+            Vector2 position = new Vector2(10, 10); // Example position for the text
+            m_spriteBatch.DrawString(m_font, velocityText, position, Color.White);
+
+            m_spriteBatch.End();
         }
 
         public override void update(GameTime gameTime)
         {
+            m_ship.Update(gameTime);
         }
 
         public void GenerateTerrain()
         {
-            // m_vertsLineStrip = new VertexPositionColor[6];
-
             List<Vector3> points = new List<Vector3>();
 
             int yStartRange = (int)(m_graphics.PreferredBackBufferHeight - m_graphics.PreferredBackBufferHeight * 0.60);
