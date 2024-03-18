@@ -31,7 +31,11 @@ namespace CS5410
             m_texShip = contentManager.Load<Texture2D>("Images/rocket");
             m_texCircle = contentManager.Load<Texture2D>("Images/circle");
 
-            m_ship = new Ship(new Vector2(50, 50), new Vector2(0, 0), new Vector2(1, 0), 38f);
+            float shipScaleFactor = 0.1f; // Example: Ship size = 10% of screen height
+            int screenHeight = m_graphics.GraphicsDevice.Viewport.Height; // Assuming you have access to GraphicsDevice or similar
+            float shipHeight = m_texShip.Height; // Assuming shipTexture is your ship's texture
+            float scale = (screenHeight * shipScaleFactor) / shipHeight;
+            m_ship = new Ship(new Vector2(50, 50), new Vector2(0, 0), new Vector2(1, 0), scale);
 
         }
 
@@ -39,8 +43,7 @@ namespace CS5410
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
-                // TODO: remove
-                m_terrain.GenerateTerrain();
+
                 return GameStateEnum.MainMenu;
             }
 
@@ -64,7 +67,7 @@ namespace CS5410
                 Color.White, 
                 rotationAngle, 
                 origin, 
-                0.5f, 
+                0.5f * m_ship.scale, 
                 SpriteEffects.None, 
                 0f);
             m_spriteBatch.Draw(
@@ -78,12 +81,14 @@ namespace CS5410
                 SpriteEffects.None,
                 0f);
 
-            string velocityText = $"Velocity: {m_ship.velocity.X:F2}, {m_ship.velocity.Y:F2}";
+            string velocityText = $"Velocity: {m_ship.getMeterPerSec():F2} m/s";
             Vector2 position = new Vector2(10, 10); // Example position for the text
             m_spriteBatch.DrawString(m_font, velocityText, position, Color.White);
             Vector2 position_fuel = new Vector2(10, 30); // Example position for the text
             m_spriteBatch.DrawString(m_font, m_ship.fuel.ToString(), position_fuel, Color.White);
+            m_spriteBatch.DrawString(m_font, m_ship.GetRotationInDegrees().ToString(), new Vector2(1800, 30), Color.White);
             m_spriteBatch.DrawString(m_font, state, new Vector2(1000, 30), Color.White);
+            m_spriteBatch.DrawString(m_font, m_ship.scale.ToString(), new Vector2(1000, 100), Color.White);
 
             m_spriteBatch.End();
         }
@@ -104,9 +109,17 @@ namespace CS5410
                 {
                     if (line.is_safe_zone)
                     {
-                        // check if win conditions
-                        // else dead
-                        state = "Landing";
+                        if (m_ship.checkLandedSafely())
+                        {
+                            // win
+                            state = "Landing";
+                        }
+                        else 
+                        {
+                            m_ship.isDead = true;
+                            state = "Dead";
+
+                        }
                     }
                     else 
                     {

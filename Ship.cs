@@ -2,10 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace LunarLander
 {
@@ -15,18 +12,21 @@ namespace LunarLander
         public Vector2 velocity { get; private set; }
         public Vector2 direction { get; private set; }
         public  float radius { get; private set; }
+        public float scale;
         private KeyboardInput m_inputKeyboard;
+        public float targetRadius = 38.0f;
         private const float gravity = 6f;
         private const float thrustAmount = 15.0f;
-        public float fuel = 20000.0f;
+        public float fuel = 20.0f;
         public bool isDead;
 
-        public Ship(Vector2 position, Vector2 velocity, Vector2 direction, float radius) 
+        public Ship(Vector2 position, Vector2 velocity, Vector2 direction, float scale) 
         { 
             this.position = position;
             this.velocity = velocity;
             this.direction = direction;
-            this.radius = radius;
+            this.scale = scale;
+            this.radius = targetRadius * scale;
 
             m_inputKeyboard = new KeyboardInput();
 
@@ -40,7 +40,7 @@ namespace LunarLander
         {
             m_inputKeyboard.Update(gameTime);
 
-            //addGravity(gameTime);
+            addGravity(gameTime);
             updatePosition(gameTime);
         }
 
@@ -83,6 +83,36 @@ namespace LunarLander
             );
 
             direction = Vector2.Normalize(newDirection);
+        }
+
+        public bool checkLandedSafely()
+        {
+            if (getMeterPerSec() <= 2 && (GetRotationInDegrees() <= 5 || GetRotationInDegrees() >= 355))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public float getMeterPerSec()
+        {
+            return velocity.Y / 11;
+        }
+
+        public float GetRotationInDegrees()
+        {
+            float angleRadians = (float)Math.Atan2(direction.X, -direction.Y);
+
+            // Convert radians to degrees
+            float angleDegrees = angleRadians * (180f / (float)Math.PI);
+
+            // Normalize the angle to be within the range [0, 360)
+            if (angleDegrees < 0)
+            {
+                angleDegrees += 360f;
+            }
+
+            return angleDegrees;
         }
 
         private void updatePosition(GameTime gameTime)
