@@ -126,12 +126,12 @@ namespace CS5410
 
         private void resetGameState()
         {
-            m_terrain.GenerateTerrain();
             float shipScaleFactor = 0.1f; // Example: Ship size = 10% of screen height
             int screenHeight = m_graphics.GraphicsDevice.Viewport.Height; // Assuming you have access to GraphicsDevice or similar
             float shipHeight = m_texShip.Height; // Assuming shipTexture is your ship's texture
             float scale = (screenHeight * shipScaleFactor) / shipHeight;
             m_ship = new Ship(new Vector2(50, 50), new Vector2(0, 0), new Vector2(1, 0), scale);
+            m_terrain.GenerateTerrain(scale, false);
         }
 
     }

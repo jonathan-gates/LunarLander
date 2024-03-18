@@ -44,7 +44,7 @@ namespace LunarLander.Terrain
         }
 
 
-        public void GenerateTerrain()
+        public void GenerateTerrain(float scale, bool firstLevel)
         {
             List<Vector3> points = new List<Vector3>();
 
@@ -52,8 +52,13 @@ namespace LunarLander.Terrain
             int yEndRange = (int)(m_graphics.PreferredBackBufferHeight * 0.75);
             int xLeftSafeZone = m_graphics.PreferredBackBufferWidth - (int)(m_graphics.PreferredBackBufferWidth * 0.85);
             int xRightSafeZone = (int)(m_graphics.PreferredBackBufferWidth * 0.85);
-            const int SAFE_ZONE_LENGTH = 200;
-            const int MIN_DISTANCE_BETWEEN = 200;
+            int SAFE_ZONE_LENGTH = (int)(200 * scale);
+            int MIN_DISTANCE_BETWEEN = (int)(200 * scale);
+
+            if (!firstLevel)
+            {
+                SAFE_ZONE_LENGTH = (int)(SAFE_ZONE_LENGTH * 0.75);
+            }
 
             int firstSafeZoneX = m_random.Next(xLeftSafeZone, xRightSafeZone - SAFE_ZONE_LENGTH);
             int firstSafeZoneY = m_random.Next(yStartRange, yEndRange);
@@ -83,7 +88,7 @@ namespace LunarLander.Terrain
             Line connectorSafeLine;
             Line secondSafeLine;
             Line lastLine;
-            if (leftSpace > rightSpace)
+            if (leftSpace > rightSpace && firstLevel)
             {
                 startLine = new Line(
                     new Vector2(0, m_random.Next(yStartRange, yEndRange)),
@@ -116,24 +121,39 @@ namespace LunarLander.Terrain
                     new Vector2(firstSafeZoneX, firstSafeZoneY),
                     new Vector2(firstSafeZoneX + SAFE_ZONE_LENGTH, firstSafeZoneY),
                     true);
-                connectorSafeLine = new Line(
-                    new Vector2(firstSafeZoneX + SAFE_ZONE_LENGTH, firstSafeZoneY),
-                    new Vector2(secondSafeZoneX, secondSafeZoneY),
-                    false);
-                secondSafeLine = new Line(
-                    new Vector2(secondSafeZoneX, secondSafeZoneY),
-                    new Vector2(secondSafeZoneX + SAFE_ZONE_LENGTH, secondSafeZoneY),
-                    true);
-                lastLine = new Line(
-                    new Vector2(secondSafeZoneX + SAFE_ZONE_LENGTH, secondSafeZoneY),
-                    new Vector2(m_graphics.PreferredBackBufferWidth, m_graphics.PreferredBackBufferHeight / 2),
-                    false);
+                if (firstLevel)
+                {
+                    connectorSafeLine = new Line(
+                        new Vector2(firstSafeZoneX + SAFE_ZONE_LENGTH, firstSafeZoneY),
+                        new Vector2(secondSafeZoneX, secondSafeZoneY),
+                        false);
+                    secondSafeLine = new Line(
+                        new Vector2(secondSafeZoneX, secondSafeZoneY),
+                        new Vector2(secondSafeZoneX + SAFE_ZONE_LENGTH, secondSafeZoneY),
+                        true);
+                    lastLine = new Line(
+                        new Vector2(secondSafeZoneX + SAFE_ZONE_LENGTH, secondSafeZoneY),
+                        new Vector2(m_graphics.PreferredBackBufferWidth, m_graphics.PreferredBackBufferHeight / 2),
+                        false);
+                }
+                else
+                {
+                    connectorSafeLine = null;
+                    secondSafeLine = null;
+                    lastLine = new Line(
+                        new Vector2(firstSafeZoneX + SAFE_ZONE_LENGTH, firstSafeZoneY),
+                        new Vector2(m_graphics.PreferredBackBufferWidth, m_graphics.PreferredBackBufferHeight / 2),
+                        false);
+                }
 
             }
             lines.AddLine(startLine);
             lines.AddLine(firstSafeLine);
-            lines.AddLine(connectorSafeLine);
-            lines.AddLine(secondSafeLine);
+            if (firstLevel && secondSafeLine != null && connectorSafeLine != null)
+            { 
+                lines.AddLine(connectorSafeLine);
+                lines.AddLine(secondSafeLine);
+            }
             lines.AddLine(lastLine);
 
             // mid point
