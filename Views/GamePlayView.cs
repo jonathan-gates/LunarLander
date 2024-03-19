@@ -62,14 +62,41 @@ namespace CS5410
 
             m_ship.render(m_spriteBatch, m_texShip, m_texCircle, scale);
 
-            string velocityText = $"Velocity: {m_ship.getMeterPerSec():F2} m/s";
-            Vector2 position = new Vector2(10, 10); // Example position for the text
-            m_spriteBatch.DrawString(m_font, velocityText, position, Color.White);
-            Vector2 position_fuel = new Vector2(10, 30); // Example position for the text
-            m_spriteBatch.DrawString(m_font, m_ship.fuel.ToString(), position_fuel, Color.White);
-            m_spriteBatch.DrawString(m_font, m_ship.GetRotationInDegrees().ToString(), new Vector2(1800, 30), Color.White);
-            m_spriteBatch.DrawString(m_font, state, new Vector2(1000, 30), Color.White);
-            m_spriteBatch.DrawString(m_font, m_ship.scale.ToString(), new Vector2(1000, 100), Color.White);
+            float fuelInt;
+
+            if (m_ship.fuel <= 0)
+            {
+                fuelInt = 0;
+            }
+            else
+            { 
+                fuelInt= m_ship.fuel;
+            }
+
+            string fuelStr  = "  FUEL:  " + String.Format("{0,10:F2}", fuelInt);
+            string speedStr = "SPEED: " + String.Format("{0,10:F2}", m_ship.getMeterPerSec());
+            string angleStr = "ANGLE: " + String.Format("{0,10:F2}", m_ship.GetRotationInDegrees());
+            // Assume m_font is your loaded SpriteFont
+            Vector2 fuelStrSize = m_font.MeasureString(fuelStr);
+            Vector2 speedStrSize = m_font.MeasureString(speedStr);
+            Vector2 angleStrSize = m_font.MeasureString(angleStr);
+            int screenWidth = m_graphics.PreferredBackBufferWidth;
+            int lineHeight = 20;
+            // Calculate positions
+            Vector2 line1Position = new Vector2(screenWidth - fuelStrSize.X, 10); // 10 pixels from the top and right
+            Vector2 line2Position = new Vector2(screenWidth - fuelStrSize.X, 10 + lineHeight); // Below line 1
+            Vector2 line3Position = new Vector2(screenWidth - fuelStrSize.X, 10 + lineHeight * 2); // Below line 2
+            //draw
+            Vector2 textScale = new Vector2(0.5f, 0.5f);
+            Color fuelColor = fuelInt > 0 ? Color.Green : Color.White;
+            Color speedColor = m_ship.getMeterPerSec() <= 2.0f ? Color.Green : Color.White;
+            Color angleColor = (m_ship.GetRotationInDegrees() <= 5 || m_ship.GetRotationInDegrees() >= 355) ? Color.Green : Color.White;
+            m_spriteBatch.DrawString(m_font, fuelStr, line1Position, fuelColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
+            m_spriteBatch.DrawString(m_font, speedStr, line2Position, speedColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
+            m_spriteBatch.DrawString(m_font, angleStr, line3Position, angleColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
+
+            //m_spriteBatch.DrawString(m_font, state, new Vector2(1000, 30), Color.White);
+            //m_spriteBatch.DrawString(m_font, m_ship.scale.ToString(), new Vector2(1000, 100), Color.White);
 
             m_spriteBatch.End();
         }

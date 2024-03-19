@@ -19,7 +19,7 @@ namespace LunarLander
         private KeyboardInput m_inputKeyboard;
         public float targetRadius = 38.0f;
         private const float gravity = 6f;
-        private const float thrustAmount = 15.0f;
+        private const float thrustAmount = 20.0f;
         public float fuel = 20.0f;
         private float oldFuel = 20.0f;
         private bool thrustOn;
