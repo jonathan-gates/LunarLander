@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Net.Mime;
 
 namespace LunarLander
 {
@@ -90,7 +89,9 @@ namespace LunarLander
         {
             if (isDead || fuel <= 0 || !controlable) return;
             thrustOn = true;
-            m_particleSystemThrust.shipThrust(position, (float)Math.Atan2(-direction.Y, -direction.X));
+            m_particleSystemThrust.shipThrust(
+                position - Vector2.Normalize(direction) * collisionRadius,
+                (float)Math.Atan2(-direction.Y, -direction.X));
             player.updateThrustSound(thrustOn);
             velocity += Vector2.Normalize(direction) * thrustAmount * (float)(gameTime.ElapsedGameTime.TotalMilliseconds) / 1000.0f;
             fuel -= (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -206,8 +207,8 @@ namespace LunarLander
 
         public void render(SpriteBatch m_spriteBatch, Texture2D m_texShip, Texture2D m_texCircle, float m_scale)
         {
-            m_renderCrash.draw(m_spriteBatch, m_particleSystemCrash);
             m_renderThrust.draw(m_spriteBatch, m_particleSystemThrust);
+            m_renderCrash.draw(m_spriteBatch, m_particleSystemCrash);
 
 
             float rotationAngle = (float)Math.Atan2(this.direction.Y, this.direction.X);
