@@ -108,7 +108,7 @@ namespace CS5410
 
         private Vector2 generateParticleDirection(float baseAngle)
         {
-            float spreadAngle = MathHelper.ToRadians(30);
+            float spreadAngle = MathHelper.ToRadians(90);
             float randomAngle = baseAngle + (float)(m_random.NextDouble() - 0.5) * spreadAngle;
             Vector2 particleDirection = new Vector2((float)Math.Cos(randomAngle), (float)Math.Sin(randomAngle));
             return particleDirection;

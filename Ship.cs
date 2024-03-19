@@ -46,7 +46,7 @@ namespace LunarLander
             m_particleSystemThrust = new ParticleSystem(
                 10, 4,
                 0.12f, 0.05f,
-                2000, 500);
+                1000, 250);
             m_renderThrust = new ParticleSystemRenderer("Images/thrust");
             m_renderThrust.LoadContent(content);
 
@@ -59,9 +59,9 @@ namespace LunarLander
 
 
             // TODO: get keys from memory
-            m_inputKeyboard.registerCommand(Keys.W, false, new IInputDevice.CommandDelegate(thrust));
-            m_inputKeyboard.registerCommand(Keys.A, false, new IInputDevice.CommandDelegate(rotateLeft));
-            m_inputKeyboard.registerCommand(Keys.D, false, new IInputDevice.CommandDelegate(rotateRight));
+            m_inputKeyboard.registerCommand(Keys.Up, false, new IInputDevice.CommandDelegate(thrust));
+            m_inputKeyboard.registerCommand(Keys.Left, false, new IInputDevice.CommandDelegate(rotateLeft));
+            m_inputKeyboard.registerCommand(Keys.Right, false, new IInputDevice.CommandDelegate(rotateRight));
         }
 
         public void Update(GameTime gameTime) 
@@ -82,7 +82,7 @@ namespace LunarLander
         private void addGravity(GameTime gameTime)
         {
             if (!controlable || isDead) return;
-            velocity += new Vector2(0, gravity * (float)(gameTime.ElapsedGameTime.TotalMilliseconds) / 1000.0f);
+            velocity += new Vector2(0, gravity * scale * (float)(gameTime.ElapsedGameTime.TotalMilliseconds) / 1000.0f);
         }
 
         private void thrust(GameTime gameTime, float scale) 
@@ -93,7 +93,7 @@ namespace LunarLander
                 position - Vector2.Normalize(direction) * collisionRadius,
                 (float)Math.Atan2(-direction.Y, -direction.X));
             player.updateThrustSound(thrustOn);
-            velocity += Vector2.Normalize(direction) * thrustAmount * (float)(gameTime.ElapsedGameTime.TotalMilliseconds) / 1000.0f;
+            velocity += Vector2.Normalize(direction) * thrustAmount * scale * (float)(gameTime.ElapsedGameTime.TotalMilliseconds) / 1000.0f;
             fuel -= (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
 
@@ -207,10 +207,6 @@ namespace LunarLander
 
         public void render(SpriteBatch m_spriteBatch, Texture2D m_texShip, Texture2D m_texCircle, float m_scale)
         {
-            m_renderThrust.draw(m_spriteBatch, m_particleSystemThrust);
-            m_renderCrash.draw(m_spriteBatch, m_particleSystemCrash);
-
-
             float rotationAngle = (float)Math.Atan2(this.direction.Y, this.direction.X);
             Vector2 origin = new Vector2(m_texShip.Width / 2f, m_texShip.Height / 2f);
             Vector2 circle_origin = new Vector2(m_texCircle.Width / 2, m_texCircle.Height / 2);
@@ -238,6 +234,9 @@ namespace LunarLander
                     SpriteEffects.None,
                     0f);
             }
+
+            m_renderThrust.draw(m_spriteBatch, m_particleSystemThrust);
+            m_renderCrash.draw(m_spriteBatch, m_particleSystemCrash);
         }
     }
 }
