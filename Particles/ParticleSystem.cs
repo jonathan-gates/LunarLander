@@ -9,7 +9,6 @@ namespace CS5410
         public Dictionary<long, Particle>.ValueCollection particles { get { return m_particles.Values; } }
         private MyRandom m_random = new MyRandom();
 
-        private Vector2 m_center;
         private int m_sizeMean; // pixels
         private int m_sizeStdDev;   // pixels
         private float m_speedMean;  // pixels per millisecond
@@ -17,9 +16,8 @@ namespace CS5410
         private float m_lifetimeMean; // milliseconds
         private float m_lifetimeStdDev; // milliseconds
 
-        public ParticleSystem(Vector2 center, int sizeMean, int sizeStdDev, float speedMean, float speedStdDev, int lifetimeMean, int lifetimeStdDev)
+        public ParticleSystem(int sizeMean, int sizeStdDev, float speedMean, float speedStdDev, int lifetimeMean, int lifetimeStdDev)
         {
-            m_center = center;
             m_sizeMean = sizeMean;
             m_sizeStdDev = sizeStdDev;
             m_speedMean = speedMean;
@@ -28,11 +26,11 @@ namespace CS5410
             m_lifetimeStdDev = lifetimeStdDev;
         }
 
-        private Particle create()
+        private Particle create(Vector2 center)
         {
             float size = (float)m_random.nextGaussian(m_sizeMean, m_sizeStdDev);
             var p = new Particle(
-                    m_center,
+                    center,
                     m_random.nextCircleVector(),
                     (float)m_random.nextGaussian(m_speedMean, m_speedStDev),
                     new Vector2(size, size),
@@ -41,7 +39,7 @@ namespace CS5410
             return p;
         }
 
-        public void update(GameTime gameTime)
+        public void update(GameTime gameTime, Vector2 center)
         {
             // Update existing particles
             List<long> removeMe = new List<long>();
@@ -62,9 +60,19 @@ namespace CS5410
             // Generate some new particles
             for (int i = 0; i < 8; i++)
             {
-                var particle = create();
+                var particle = create(center);
                 m_particles.Add(particle.name, particle);
             }
+        }
+
+        public void shipThrust()
+        { 
+
+        }
+
+        public void shipCrash()
+        { 
+
         }
     }
 }

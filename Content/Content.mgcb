@@ -39,6 +39,18 @@
 /processorParam:TextureFormat=Color
 /build:Images/circle.png
 
+#begin Images/crash.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Images/crash.png
+
 #begin Images/rocket.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -51,15 +63,15 @@
 /processorParam:TextureFormat=Color
 /build:Images/rocket.png
 
-#begin Images/white.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Images/white.png
+#begin Sounds/crash.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/crash.mp3
+
+#begin Sounds/thrust.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/thrust.mp3
 

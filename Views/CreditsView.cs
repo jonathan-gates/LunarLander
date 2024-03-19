@@ -10,6 +10,11 @@ namespace CS5410
         private SpriteFont m_font;
         private const string MESSAGE = "Credits View";
         // ship texture https://opengameart.org/content/rocket
+        //////// crash particle https://opengameart.org/content/simple-explosion
+        // thrust and crash https://opengameart.org/content/smoke-particle-assets
+        // sound crash https://opengameart.org/content/big-explosion
+        // thrust https://opengameart.org/content/fire-loop
+
 
         public override void loadContent(ContentManager contentManager)
         {
