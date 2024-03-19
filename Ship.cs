@@ -25,11 +25,13 @@ namespace LunarLander
         private float oldFuel = 20.0f;
         private bool thrustOn;
         private bool isDead;
-        private bool controlable = true;
+        private bool controlable;
         private ParticleSystem m_particleSystemThrust;
         private ParticleSystem m_particleSystemCrash;
         private ParticleSystemRenderer m_renderThrust;
         private ParticleSystemRenderer m_renderCrash;
+        private PersistenceManager m_persistenceManager;
+        private bool m_controlsLoaded;
 
         public Ship(Vector2 position, Vector2 velocity, Vector2 direction, float scale, SoundEffect thrustSound, SoundEffect crashSound, ContentManager content) 
         { 
@@ -38,6 +40,9 @@ namespace LunarLander
             this.direction = direction;
             this.scale = scale;
             this.collisionRadius = targetRadius * scale;
+
+            m_persistenceManager = new PersistenceManager();
+            m_persistenceManager.loadControls();
 
             m_inputKeyboard = new KeyboardInput();
 
@@ -56,16 +61,19 @@ namespace LunarLander
                 2000, 500);
             m_renderCrash = new ParticleSystemRenderer("Images/crash");
             m_renderCrash.LoadContent(content);
-
-
-            // TODO: get keys from memory
-            m_inputKeyboard.registerCommand(Keys.Up, false, new IInputDevice.CommandDelegate(thrust));
-            m_inputKeyboard.registerCommand(Keys.Left, false, new IInputDevice.CommandDelegate(rotateLeft));
-            m_inputKeyboard.registerCommand(Keys.Right, false, new IInputDevice.CommandDelegate(rotateRight));
         }
 
         public void Update(GameTime gameTime) 
         {
+            if (!m_controlsLoaded && m_persistenceManager.m_controlsPersistence != null)
+            { 
+                m_inputKeyboard.registerCommand(m_persistenceManager.m_controlsPersistence.ThrustKey, false, new IInputDevice.CommandDelegate(thrust));
+                m_inputKeyboard.registerCommand(m_persistenceManager.m_controlsPersistence.RotateLeftKey, false, new IInputDevice.CommandDelegate(rotateLeft));
+                m_inputKeyboard.registerCommand(m_persistenceManager.m_controlsPersistence.RotateRightKey, false, new IInputDevice.CommandDelegate(rotateRight));
+                m_controlsLoaded = true;
+                controlable = true;
+            }
+
             m_inputKeyboard.Update(gameTime);
             if (oldFuel == fuel)
             {

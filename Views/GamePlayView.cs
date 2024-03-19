@@ -21,8 +21,6 @@ namespace CS5410
         private SoundEffect crashSound;
         private ContentManager m_contentManager;
         private Terrain m_terrain;
-        private string state = "";
-        
 
         public override void loadContent(ContentManager contentManager)
         {
@@ -104,12 +102,6 @@ namespace CS5410
         public override void update(GameTime gameTime)
         {
             m_ship.Update(gameTime);
-            // TODO: remove test colide
-            state = "";
-            if (m_ship.LineIntersectsCircle(new Vector2(100, 100), new Vector2(200, 200)))
-            {
-                
-            }
             // check colision
             foreach (var line in m_terrain.getLines())
             {
@@ -120,20 +112,17 @@ namespace CS5410
                         if (m_ship.checkLandedSafely())
                         {
                             // win
-                            state = "Landing";
                             m_ship.hasWon();
                         }
                         else 
                         {
                             m_ship.hasDied();
-                            state = "Dead";
 
                         }
                     }
                     else 
                     {
                         m_ship.hasDied();
-                        state = "Dead";
                     }
                 }
             }

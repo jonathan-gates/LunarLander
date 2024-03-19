@@ -18,10 +18,10 @@ namespace LunarLander
     {
         private bool saving = false;
         private bool loading = false;
-        public ControlsPersistence controlsPersistence { get; private set; }
-        public ScoresPersistence scoresPersistence { get; private set; }
+        public ControlsPersistence m_controlsPersistence { get; private set; }
+        public ScoresPersistence m_scoresPersistence { get; private set; }
 
-        void saveControls(Keys thrust, Keys rotateLeft, Keys rotateRight)
+        public void saveControls(Keys thrust, Keys rotateLeft, Keys rotateRight)
         {
             lock (this)
             {
@@ -52,9 +52,9 @@ namespace LunarLander
                             }
                         }
                     }
-                    catch (IsolatedStorageException)
+                    catch (IsolatedStorageException e)
                     {
-                        
+                        System.Diagnostics.Debug.WriteLine(e.ToString());
                     }
                 }
 
@@ -92,14 +92,14 @@ namespace LunarLander
                                 if (fs != null)
                                 {
                                     DataContractJsonSerializer mySerializer = new DataContractJsonSerializer(typeof(ControlsPersistence));
-                                    controlsPersistence = (ControlsPersistence)mySerializer.ReadObject(fs);
+                                    m_controlsPersistence = (ControlsPersistence)mySerializer.ReadObject(fs);
                                 }
                             }
                         }
                     }
                     catch (IsolatedStorageException)
                     {
-                        controlsPersistence = null;
+                        m_controlsPersistence = null;
                     }
                 }
 
@@ -107,7 +107,7 @@ namespace LunarLander
             });
         }
 
-        void saveScore(List<float> scores, float newScore)
+        public void saveScore(List<float> scores, float newScore)
         {
             lock (this)
             {
@@ -148,7 +148,7 @@ namespace LunarLander
             });
         }
 
-        void loadHighScores() 
+        public void loadHighScores() 
         {
             lock (this)
             {
@@ -178,14 +178,14 @@ namespace LunarLander
                                 if (fs != null)
                                 {
                                     DataContractJsonSerializer mySerializer = new DataContractJsonSerializer(typeof(ScoresPersistence));
-                                    scoresPersistence = (ScoresPersistence)mySerializer.ReadObject(fs);
+                                    m_scoresPersistence = (ScoresPersistence)mySerializer.ReadObject(fs);
                                 }
                             }
                         }
                     }
                     catch (IsolatedStorageException)
                     {
-                        scoresPersistence = null;
+                        m_scoresPersistence = null;
                     }
                 }
 
