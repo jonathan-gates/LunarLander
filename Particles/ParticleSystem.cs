@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 
 namespace CS5410
@@ -26,20 +27,20 @@ namespace CS5410
             m_lifetimeStdDev = lifetimeStdDev;
         }
 
-        private Particle create(Vector2 center)
-        {
-            float size = (float)m_random.nextGaussian(m_sizeMean, m_sizeStdDev);
-            var p = new Particle(
-                    center,
-                    m_random.nextCircleVector(),
-                    (float)m_random.nextGaussian(m_speedMean, m_speedStDev),
-                    new Vector2(size, size),
-                    new System.TimeSpan(0, 0, 0, 0, (int)(m_random.nextGaussian(m_lifetimeMean, m_lifetimeStdDev)))); ;
+        //private Particle create(Vector2 center)
+        //{
+        //    float size = (float)m_random.nextGaussian(m_sizeMean, m_sizeStdDev);
+        //    var p = new Particle(
+        //            center,
+        //            m_random.nextCircleVector(),
+        //            (float)m_random.nextGaussian(m_speedMean, m_speedStDev),
+        //            new Vector2(size, size),
+        //            new System.TimeSpan(0, 0, 0, 0, (int)(m_random.nextGaussian(m_lifetimeMean, m_lifetimeStdDev)))); ;
 
-            return p;
-        }
+        //    return p;
+        //}
 
-        public void update(GameTime gameTime, Vector2 center)
+        public void update(GameTime gameTime)
         {
             // Update existing particles
             List<long> removeMe = new List<long>();
@@ -57,22 +58,60 @@ namespace CS5410
                 m_particles.Remove(key);
             }
 
+        }
+
+        private Particle createThrustParticle(Vector2 center, float baseAngle)
+        {
+            float size = (float)m_random.nextGaussian(m_sizeMean, m_sizeStdDev);
+            var p = new Particle(
+                    center,
+                    generateParticleDirection(baseAngle),
+                    (float)m_random.nextGaussian(m_speedMean, m_speedStDev),
+                    new Vector2(size, size),
+                    new System.TimeSpan(0, 0, 0, 0, (int)(m_random.nextGaussian(m_lifetimeMean, m_lifetimeStdDev)))); ;
+
+            return p;
+        }
+
+        private Particle createCrashParticle(Vector2 center)
+        {
+            float size = (float)m_random.nextGaussian(m_sizeMean, m_sizeStdDev);
+            var p = new Particle(
+                    center,
+                    m_random.nextCircleVector(),
+                    (float)m_random.nextGaussian(m_speedMean, m_speedStDev),
+                    new Vector2(size, size),
+                    new System.TimeSpan(0, 0, 0, 0, (int)(m_random.nextGaussian(m_lifetimeMean, m_lifetimeStdDev)))); ;
+
+            return p;
+        }
+
+        public void shipThrust(Vector2 center, float baseAngle)
+        {
             // Generate some new particles
             for (int i = 0; i < 8; i++)
             {
-                var particle = create(center);
+                var particle = createThrustParticle(center, baseAngle);
                 m_particles.Add(particle.name, particle);
             }
         }
 
-        public void shipThrust()
-        { 
-
+        public void shipCrash(Vector2 center)
+        {
+            // Generate some new particles
+            for (int i = 0; i < 360; i++)
+            {
+                var particle = createCrashParticle(center);
+                m_particles.Add(particle.name, particle);
+            }
         }
 
-        public void shipCrash()
-        { 
-
+        private Vector2 generateParticleDirection(float baseAngle)
+        {
+            float spreadAngle = MathHelper.ToRadians(30);
+            float randomAngle = baseAngle + (float)(m_random.NextDouble() - 0.5) * spreadAngle;
+            Vector2 particleDirection = new Vector2((float)Math.Cos(randomAngle), (float)Math.Sin(randomAngle));
+            return particleDirection;
         }
     }
 }

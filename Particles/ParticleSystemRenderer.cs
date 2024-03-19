@@ -21,8 +21,6 @@ namespace CS5410
 
         public void draw(SpriteBatch spriteBatch, ParticleSystem system)
         {
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-
             Rectangle r = new Rectangle(0, 0, 0, 0);
             Vector2 centerTexture = new Vector2(m_texParticle.Width / 2, m_texParticle.Height / 2);
             foreach (Particle particle in system.particles)
@@ -43,7 +41,6 @@ namespace CS5410
                     0);
             }
 
-            spriteBatch.End();
         }
     }
 }

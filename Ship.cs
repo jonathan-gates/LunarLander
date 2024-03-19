@@ -1,10 +1,12 @@
-﻿using Maze.Input;
+﻿using CS5410;
+using Maze.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-
+using System.Net.Mime;
 
 namespace LunarLander
 {
@@ -25,8 +27,12 @@ namespace LunarLander
         private bool thrustOn;
         private bool isDead;
         private bool controlable = true;
+        private ParticleSystem m_particleSystemThrust;
+        private ParticleSystem m_particleSystemCrash;
+        private ParticleSystemRenderer m_renderThrust;
+        private ParticleSystemRenderer m_renderCrash;
 
-        public Ship(Vector2 position, Vector2 velocity, Vector2 direction, float scale, SoundEffect thrustSound, SoundEffect crashSound) 
+        public Ship(Vector2 position, Vector2 velocity, Vector2 direction, float scale, SoundEffect thrustSound, SoundEffect crashSound, ContentManager content) 
         { 
             this.position = position;
             this.velocity = velocity;
@@ -37,6 +43,21 @@ namespace LunarLander
             m_inputKeyboard = new KeyboardInput();
 
             player = new SoundShipPlayer(thrustSound, crashSound);
+
+            m_particleSystemThrust = new ParticleSystem(
+                10, 4,
+                0.12f, 0.05f,
+                2000, 500);
+            m_renderThrust = new ParticleSystemRenderer("Images/thrust");
+            m_renderThrust.LoadContent(content);
+
+            m_particleSystemCrash = new ParticleSystem(
+                10, 4,
+                0.12f, 0.05f,
+                2000, 500);
+            m_renderCrash = new ParticleSystemRenderer("Images/crash");
+            m_renderCrash.LoadContent(content);
+
 
             // TODO: get keys from memory
             m_inputKeyboard.registerCommand(Keys.W, false, new IInputDevice.CommandDelegate(thrust));
@@ -55,6 +76,8 @@ namespace LunarLander
             oldFuel = fuel;
             addGravity(gameTime);
             updatePosition(gameTime);
+            m_particleSystemThrust.update(gameTime);
+            m_particleSystemCrash.update(gameTime);
         }
 
         private void addGravity(GameTime gameTime)
@@ -67,6 +90,7 @@ namespace LunarLander
         {
             if (isDead || fuel <= 0 || !controlable) return;
             thrustOn = true;
+            m_particleSystemThrust.shipThrust(position, (float)Math.Atan2(-direction.Y, -direction.X));
             player.updateThrustSound(thrustOn);
             velocity += Vector2.Normalize(direction) * thrustAmount * (float)(gameTime.ElapsedGameTime.TotalMilliseconds) / 1000.0f;
             fuel -= (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -127,10 +151,14 @@ namespace LunarLander
         }
 
         public void hasDied()
-        { 
-            isDead = true;
-            controlable= false;
-            player.playCrash();
+        {
+            if (!isDead)
+            { 
+                isDead = true;
+                controlable= false;
+                player.playCrash();
+                m_particleSystemCrash.shipCrash(position);
+            }
         }
 
         public float getMeterPerSec()
@@ -178,30 +206,37 @@ namespace LunarLander
 
         public void render(SpriteBatch m_spriteBatch, Texture2D m_texShip, Texture2D m_texCircle, float m_scale)
         {
+            m_renderCrash.draw(m_spriteBatch, m_particleSystemCrash);
+            m_renderThrust.draw(m_spriteBatch, m_particleSystemThrust);
+
+
             float rotationAngle = (float)Math.Atan2(this.direction.Y, this.direction.X);
             Vector2 origin = new Vector2(m_texShip.Width / 2f, m_texShip.Height / 2f);
             Vector2 circle_origin = new Vector2(m_texCircle.Width / 2, m_texCircle.Height / 2);
 
-            m_spriteBatch.Draw(
-                m_texShip,
-                new Vector2(this.position.X, this.position.Y),
-                null,
-                Color.White,
-                rotationAngle,
-                origin,
-                0.5f * this.scale,
-                SpriteEffects.None,
-                0f);
-            m_spriteBatch.Draw(
-                m_texCircle,
-                this.position,
-                null,
-                Color.White,
-                0f,
-                circle_origin,
-                m_scale,
-                SpriteEffects.None,
-                0f);
+            if (!isDead)
+            { 
+                m_spriteBatch.Draw(
+                    m_texShip,
+                    new Vector2(this.position.X, this.position.Y),
+                    null,
+                    Color.White,
+                    rotationAngle,
+                    origin,
+                    0.5f * this.scale,
+                    SpriteEffects.None,
+                    0f);
+                m_spriteBatch.Draw(
+                    m_texCircle,
+                    this.position,
+                    null,
+                    Color.White,
+                    0f,
+                    circle_origin,
+                    m_scale,
+                    SpriteEffects.None,
+                    0f);
+            }
         }
     }
 }

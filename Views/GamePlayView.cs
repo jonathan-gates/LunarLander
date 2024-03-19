@@ -17,11 +17,9 @@ namespace CS5410
         private Ship m_ship; 
         private Texture2D m_texShip;
         private Texture2D m_texCircle;
-        private ParticleSystem m_particleSystem;
-        private ParticleSystemRenderer m_renderThrust;
-        private ParticleSystemRenderer m_renderCrash;
         private SoundEffect thrustSound;
         private SoundEffect crashSound;
+        private ContentManager m_contentManager;
         private Terrain m_terrain;
         private string state = "";
         
@@ -37,6 +35,8 @@ namespace CS5410
 
             thrustSound = contentManager.Load<SoundEffect>("Sounds/thrust");
             crashSound = contentManager.Load<SoundEffect>("Sounds/crash");
+
+            m_contentManager = contentManager;
 
             resetGameState();
         }
@@ -145,7 +145,7 @@ namespace CS5410
             int screenHeight = m_graphics.GraphicsDevice.Viewport.Height;
             float shipHeight = m_texShip.Height;
             float scale = (screenHeight * shipScaleFactor) / shipHeight;
-            m_ship = new Ship(new Vector2(50, 50), new Vector2(0, 0), new Vector2(1, 0), scale, thrustSound, crashSound);
+            m_ship = new Ship(new Vector2(50, 50), new Vector2(0, 0), new Vector2(1, 0), scale, thrustSound, crashSound, m_contentManager);
             m_terrain.GenerateTerrain(scale, true);
         }
 

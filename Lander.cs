@@ -9,7 +9,6 @@ namespace LunarLander
     public class Lander : Game
     {
         private GraphicsDeviceManager m_graphics;
-        //private SpriteBatch m_spriteBatch;
         private IGameState m_currentState;
         private Dictionary<GameStateEnum, IGameState> m_states;
 
