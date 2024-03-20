@@ -73,6 +73,11 @@ namespace LunarLander
                 {
 
                     ((GamePlayView)m_states[nextStateEnum]).resetGameState();
+                    ((GamePlayView)m_states[nextStateEnum]).loadHighScores();
+                }
+                else if (nextStateEnum == GameStateEnum.HighScores && m_currentState is not HighScoresView)
+                {
+                    ((HighScoresView)m_states[nextStateEnum]).loadHighScores();
                 }
                 m_currentState = m_states[nextStateEnum];
             }

@@ -77,7 +77,7 @@ namespace LunarLander
                             // Specify your default keys here
                             saveControls(Keys.Up, Keys.Left, Keys.Right); // Save the default controls
                         }
-                    }); ;
+                    }); 
                     result.Wait();
 
                 }
@@ -192,7 +192,6 @@ namespace LunarLander
                     }
                     catch (IsolatedStorageException)
                     {
-                        m_scoresPersistence = null;
                     }
                 }
 

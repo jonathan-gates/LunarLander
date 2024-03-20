@@ -19,12 +19,12 @@ namespace LunarLander
         public float scale;
         private KeyboardInput m_inputKeyboard;
         public float targetRadius = 38.0f;
-        private const float gravity = 6f;
+        private const float gravity = 8f;
         private const float thrustAmount = 20.0f;
         public float fuel = 20.0f;
         private float oldFuel = 20.0f;
         private bool thrustOn;
-        private bool isDead;
+        public bool isDead { get; private set; }
         private bool hasLanded;
         private bool controlable;
         private ParticleSystem m_particleSystemThrust;

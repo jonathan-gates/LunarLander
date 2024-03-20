@@ -13,13 +13,11 @@ namespace LunarLander.Persisitence
         public ScoresPersistence() { }
 
         public ScoresPersistence(List<float> scores, float newScore) 
-        { 
+        {
             scores.Add(newScore);
             scores.Sort((a, b) => b.CompareTo(a));
-            if (scores.Count > 5)
-            { 
-                this.Scores = scores.Take(5).ToList();
-            }
+
+            this.Scores = scores.Take(5).ToList();
         }
 
         [DataMember()]

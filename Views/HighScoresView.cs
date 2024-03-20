@@ -1,18 +1,22 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LunarLander;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace CS5410
 {
     public class HighScoresView : GameStateView
     {
         private SpriteFont m_font;
-        private const string MESSAGE = "These are the high scores";
+        private PersistenceManager m_persistenceManager;
 
         public override void loadContent(ContentManager contentManager)
         {
             m_font = contentManager.Load<SpriteFont>("Fonts/menu");
+            m_persistenceManager = new PersistenceManager();
+            loadHighScores();
         }
 
         public override GameStateEnum processInput(GameTime gameTime)
@@ -29,15 +33,30 @@ namespace CS5410
         {
             m_spriteBatch.Begin();
 
-            Vector2 stringSize = m_font.MeasureString(MESSAGE);
-            m_spriteBatch.DrawString(m_font, MESSAGE,
-                new Vector2(m_graphics.PreferredBackBufferWidth / 2 - stringSize.X / 2, m_graphics.PreferredBackBufferHeight / 2 - stringSize.Y), Color.Yellow);
+            string scoresText = "Top 5 HighScores:\n";
+
+            if (m_persistenceManager.m_scoresPersistence != null)
+            { 
+                foreach (float score in m_persistenceManager.m_scoresPersistence.Scores)
+                {
+                    scoresText +=  "          " + score.ToString("F3") + "\n";
+                }
+            }
+            Vector2 screenSize = new Vector2(m_graphics.GraphicsDevice.Viewport.Width, m_graphics.GraphicsDevice.Viewport.Height);
+            Vector2 textSize = m_font.MeasureString(scoresText);
+            Vector2 position = (screenSize - textSize) / 2;
+            m_spriteBatch.DrawString(m_font, scoresText, position, Color.White);
 
             m_spriteBatch.End();
         }
 
         public override void update(GameTime gameTime)
         {
+        }
+
+        public void loadHighScores()
+        {
+            m_persistenceManager.loadHighScores();
         }
     }
 }

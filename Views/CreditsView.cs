@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LunarLander;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -9,13 +10,6 @@ namespace CS5410
     {
         private SpriteFont m_font;
         private const string MESSAGE = "Credits View";
-        // ship texture https://opengameart.org/content/rocket
-        //////// crash particle https://opengameart.org/content/simple-explosion
-        // thrust and crash https://opengameart.org/content/smoke-particle-assets
-        // sound crash https://opengameart.org/content/big-explosion
-        // thrust https://opengameart.org/content/fire-loop
-        // landed https://opengameart.org/content/win-sound-effect
-
 
         public override void loadContent(ContentManager contentManager)
         {
@@ -36,9 +30,19 @@ namespace CS5410
         {
             m_spriteBatch.Begin();
 
-            Vector2 stringSize = m_font.MeasureString(MESSAGE);
-            m_spriteBatch.DrawString(m_font, MESSAGE,
-                new Vector2(m_graphics.PreferredBackBufferWidth / 2 - stringSize.X / 2, m_graphics.PreferredBackBufferHeight / 2 - stringSize.Y), Color.Yellow);
+            string creditsText = "Credits:\n";
+
+            creditsText += "Created by Jonathan Gates";
+            creditsText += "Ship Texture: https://opengameart.org/content/rocket";
+            creditsText += "Thrust and Crash Particles: https://opengameart.org/content/smoke-particle-assets";
+            creditsText += "Crash Sound: https://opengameart.org/content/big-explosion";
+            creditsText += "Thrust Sound: https://opengameart.org/content/fire-loop";
+            creditsText += "Landing Sound: https://opengameart.org/content/win-sound-effect";
+
+            Vector2 screenSize = new Vector2(m_graphics.GraphicsDevice.Viewport.Width, m_graphics.GraphicsDevice.Viewport.Height);
+            Vector2 textSize = m_font.MeasureString(creditsText);
+            Vector2 position = (screenSize - textSize) / 2;
+            m_spriteBatch.DrawString(m_font, creditsText, position, Color.White);
 
             m_spriteBatch.End();
         }
