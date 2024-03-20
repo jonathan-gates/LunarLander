@@ -237,16 +237,17 @@ namespace LunarLander
                     0.5f * this.scale,
                     SpriteEffects.None,
                     0f);
-                m_spriteBatch.Draw(
-                    m_texCircle,
-                    this.position,
-                    null,
-                    Color.White,
-                    0f,
-                    circle_origin,
-                    m_scale,
-                    SpriteEffects.None,
-                    0f);
+                // for collision circle
+                //m_spriteBatch.Draw(
+                //    m_texCircle,
+                //    this.position,
+                //    null,
+                //    Color.White,
+                //    0f,
+                //    circle_origin,
+                //    m_scale,
+                //    SpriteEffects.None,
+                //    0f);
             }
 
             m_renderThrust.draw(m_spriteBatch, m_particleSystemThrust);

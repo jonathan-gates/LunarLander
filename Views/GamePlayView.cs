@@ -89,48 +89,61 @@ namespace CS5410
                 fuelInt= m_ship.fuel;
             }
 
-            string fuelStr  = "  FUEL:  " + String.Format("{0,10:F2}", fuelInt) + " s";
-            string speedStr = "SPEED: " + String.Format("{0,10:F2}", m_ship.getMeterPerSec()) + " m/s";
-            string angleStr = "ANGLE: " + String.Format("{0,10:F2}", m_ship.GetRotationInDegrees()) + " degrees";
+            
+
+
+            string fuelStr  = "  FUEL:  " + String.Format("{0,5:F2}", fuelInt) + " s";
+            string speedStr = "      SPEED: " + String.Format("{0,5:F2}", m_ship.getMeterPerSec()) + " m/s";
+            string angleStr = "       ANGLE: " + String.Format("{0,5:F2}", m_ship.GetRotationInDegrees()) + " deg";
             // Assume m_font is your loaded SpriteFont
             Vector2 fuelStrSize = m_font.MeasureString(fuelStr);
-            int lineHeight = 20;
+            float lineHeight = 22 * m_ship.scale;
+            int yOffset = (int)(m_graphics.GraphicsDevice.Viewport.Height * 0.075);
+            int xOffset = (int)(m_graphics.GraphicsDevice.Viewport.Width * 0.05);
             // Calculate positions
-            Vector2 line1Position = new Vector2(screenWidth - fuelStrSize.X, 10); // 10 pixels from the top and right
-            Vector2 line2Position = new Vector2(screenWidth - fuelStrSize.X, 10 + lineHeight); // Below line 1
-            Vector2 line3Position = new Vector2(screenWidth - fuelStrSize.X, 10 + lineHeight * 2); // Below line 2
+            Vector2 line1Position = new Vector2(screenWidth - fuelStrSize.X / 2 - xOffset, 14 * m_ship.scale + yOffset); // 10 pixels from the top and right
+            Vector2 line2Position = new Vector2(screenWidth - fuelStrSize.X / 2 - xOffset, 14 + lineHeight + yOffset); // Below line 1
+            Vector2 line3Position = new Vector2(screenWidth - fuelStrSize.X / 2 - xOffset, 14 + lineHeight * 2 + yOffset); // Below line 2
             //draw
-            Vector2 textScale = new Vector2(0.5f, 0.5f);
             Color fuelColor = fuelInt > 0 ? Color.Green : Color.White;
             Color speedColor = m_ship.getMeterPerSec() <= 2.0f ? Color.Green : Color.White;
             Color angleColor = (m_ship.GetRotationInDegrees() <= 5 || m_ship.GetRotationInDegrees() >= 355) ? Color.Green : Color.White;
 
-            drawOutlineText(m_spriteBatch, m_font, fuelStr, Color.Black, fuelColor, line1Position, 0.45f);
-            drawOutlineText(m_spriteBatch, m_font, speedStr, Color.Black, speedColor, line2Position, 0.45f);
-            drawOutlineText(m_spriteBatch, m_font, angleStr, Color.Black, angleColor, line3Position, 0.45f);
+
+            // Backdrop
+            float maxWidth = m_graphics.GraphicsDevice.Viewport.Width * 0.25f;
+            float totalHeight = m_graphics.GraphicsDevice.Viewport.Height * 0.075f; 
+            Vector2 backdropPosition = new Vector2(screenWidth - maxWidth / 2 - xOffset - (10 * m_ship.scale), yOffset); // Size of the backdrop
+            Vector2 backdropSize = new Vector2(maxWidth - ( 175 * m_ship.scale), totalHeight);
+            Texture2D pixel = new Texture2D(m_graphics.GraphicsDevice, 1, 1);
+            pixel.SetData(new[] { Color.White }); // A white pixel
+            Color backdropColor = new Color(0, 0, 0, 200);
+            m_spriteBatch.Draw(pixel, new Rectangle((int)backdropPosition.X - 50, (int)backdropPosition.Y, (int)backdropSize.X, (int)backdropSize.Y), backdropColor);
+
+
+            drawOutlineText(m_spriteBatch, m_font, fuelStr, Color.Black, fuelColor, line1Position, m_ship.scale * 0.45f);
+            drawOutlineText(m_spriteBatch, m_font, speedStr, Color.Black, speedColor, line2Position, m_ship.scale * 0.45f);
+            drawOutlineText(m_spriteBatch, m_font, angleStr, Color.Black, angleColor, line3Position, m_ship.scale * 0.45f);
 
 
             Vector2 screenSize = new Vector2(m_graphics.GraphicsDevice.Viewport.Width, m_graphics.GraphicsDevice.Viewport.Height);
             if (m_inTransition)
             {
                 string transitionText = "Next Level in: " + m_countDown.ToString("F2");
-                Vector2 textSize = m_font.MeasureString(transitionText);
-                Vector2 position = (screenSize - textSize) / 2;
-                drawOutlineText(m_spriteBatch, m_font, transitionText, Color.Black, Color.White, position, 1.0f);
+                Vector2 position = screenSize / 2;
+                drawOutlineText(m_spriteBatch, m_font, transitionText, Color.Black, Color.White, position, m_ship.scale);
             }
             if (levelTwoWon)
             {
                 string transitionText = "Your score of " + score.ToString("F3") + " has been saved! Press ESC to return to Main Menu.";
-                Vector2 textSize = m_font.MeasureString(transitionText);
-                Vector2 position = (screenSize - textSize) / 2;
-                drawOutlineText(m_spriteBatch, m_font, transitionText, Color.Black, Color.White, position, 1.0f);
+                Vector2 position = screenSize / 2;
+                drawOutlineText(m_spriteBatch, m_font, transitionText, Color.Black, Color.White, position, m_ship.scale);
             }
             if (m_ship.isDead)
             {
                 string transitionText = "Better luck next time! Press ESC to return to Main Menu.";
-                Vector2 textSize = m_font.MeasureString(transitionText);
-                Vector2 position = (screenSize - textSize) / 2;
-                drawOutlineText(m_spriteBatch, m_font, transitionText, Color.Black, Color.White, position, 1.0f);
+                Vector2 position = screenSize / 2;
+                drawOutlineText(m_spriteBatch, m_font, transitionText, Color.Black, Color.White, position, m_ship.scale);
             }
 
             m_spriteBatch.End();
@@ -220,7 +233,7 @@ namespace CS5410
             int screenHeight = m_graphics.GraphicsDevice.Viewport.Height;
             float shipHeight = m_texShip.Height;
             float scale = (screenHeight * shipScaleFactor) / shipHeight;
-            m_ship = new Ship(new Vector2(50, 50), new Vector2(0, 0), new Vector2(1, 0), scale, thrustSound, crashSound, landedSound, m_contentManager);
+            m_ship = new Ship(new Vector2((int)(50 * scale + m_graphics.GraphicsDevice.Viewport.Width * 0.075), (int)(50 * scale)), new Vector2(0, 0), new Vector2(1, 0), scale, thrustSound, crashSound, landedSound, m_contentManager);
             return scale;
         }
 
@@ -235,6 +248,7 @@ namespace CS5410
         protected static void drawOutlineText(SpriteBatch spriteBatch, SpriteFont font, string text, Color outlineColor, Color frontColor, Vector2 position, float scale)
         {
             const float PIXEL_OFFSET = 1.0f;
+            Vector2 origin = font.MeasureString(text) / 2;
             //
             // Offset to the upper left and lower right - faster, but not as good
             //spriteBatch.DrawString(font, text, position - new Vector2(PIXEL_OFFSET * scale, PIXEL_OFFSET * scale), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
@@ -242,14 +256,14 @@ namespace CS5410
 
             //
             // Offset in each of left,right, up, down directions - slower, but good
-            spriteBatch.DrawString(font, text, position - new Vector2(PIXEL_OFFSET * scale, 0), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
-            spriteBatch.DrawString(font, text, position + new Vector2(PIXEL_OFFSET * scale, 0), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
-            spriteBatch.DrawString(font, text, position - new Vector2(0, PIXEL_OFFSET * scale), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
-            spriteBatch.DrawString(font, text, position + new Vector2(0, PIXEL_OFFSET * scale), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
+            spriteBatch.DrawString(font, text, position - new Vector2(PIXEL_OFFSET * scale / 2, 0), outlineColor, 0, origin, scale, SpriteEffects.None, 1f);
+            spriteBatch.DrawString(font, text, position + new Vector2(PIXEL_OFFSET * scale / 2, 0), outlineColor, 0, origin, scale, SpriteEffects.None, 1f);
+            spriteBatch.DrawString(font, text, position - new Vector2(0, PIXEL_OFFSET * scale / 2), outlineColor, 0, origin, scale, SpriteEffects.None, 1f);
+            spriteBatch.DrawString(font, text, position + new Vector2(0, PIXEL_OFFSET * scale / 2), outlineColor, 0, origin, scale, SpriteEffects.None, 1f);
 
             //
             // This sits inside the text rendering done just above
-            spriteBatch.DrawString(font, text, position, frontColor, 0, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            spriteBatch.DrawString(font, text, position, frontColor, 0, origin, scale, SpriteEffects.None, 0f);
         }
 
     }

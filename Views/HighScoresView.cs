@@ -42,10 +42,11 @@ namespace CS5410
                     scoresText +=  "          " + score.ToString("F3") + "\n";
                 }
             }
+            int screenHeight = m_graphics.GraphicsDevice.Viewport.Height;
+            float scale = (float)((screenHeight * 0.1) / 110);
             Vector2 screenSize = new Vector2(m_graphics.GraphicsDevice.Viewport.Width, m_graphics.GraphicsDevice.Viewport.Height);
-            Vector2 textSize = m_font.MeasureString(scoresText);
-            Vector2 position = (screenSize - textSize) / 2;
-            drawOutlineText(m_spriteBatch, m_font, scoresText, Color.Black, Color.White, position, 1.0f);
+            Vector2 position = screenSize / 2;
+            drawOutlineText(m_spriteBatch, m_font, scoresText, Color.Black, Color.White, position, scale);
 
             m_spriteBatch.End();
         }
@@ -62,6 +63,7 @@ namespace CS5410
         protected static void drawOutlineText(SpriteBatch spriteBatch, SpriteFont font, string text, Color outlineColor, Color frontColor, Vector2 position, float scale)
         {
             const float PIXEL_OFFSET = 1.0f;
+            Vector2 origin = font.MeasureString(text) / 2;
             //
             // Offset to the upper left and lower right - faster, but not as good
             //spriteBatch.DrawString(font, text, position - new Vector2(PIXEL_OFFSET * scale, PIXEL_OFFSET * scale), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
@@ -69,14 +71,14 @@ namespace CS5410
 
             //
             // Offset in each of left,right, up, down directions - slower, but good
-            spriteBatch.DrawString(font, text, position - new Vector2(PIXEL_OFFSET * scale, 0), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
-            spriteBatch.DrawString(font, text, position + new Vector2(PIXEL_OFFSET * scale, 0), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
-            spriteBatch.DrawString(font, text, position - new Vector2(0, PIXEL_OFFSET * scale), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
-            spriteBatch.DrawString(font, text, position + new Vector2(0, PIXEL_OFFSET * scale), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
+            spriteBatch.DrawString(font, text, position - new Vector2(PIXEL_OFFSET * scale / 2, 0), outlineColor, 0, origin, scale, SpriteEffects.None, 1f);
+            spriteBatch.DrawString(font, text, position + new Vector2(PIXEL_OFFSET * scale / 2, 0), outlineColor, 0, origin, scale, SpriteEffects.None, 1f);
+            spriteBatch.DrawString(font, text, position - new Vector2(0, PIXEL_OFFSET * scale / 2), outlineColor, 0, origin, scale, SpriteEffects.None, 1f);
+            spriteBatch.DrawString(font, text, position + new Vector2(0, PIXEL_OFFSET * scale / 2), outlineColor, 0, origin, scale, SpriteEffects.None, 1f);
 
             //
             // This sits inside the text rendering done just above
-            spriteBatch.DrawString(font, text, position, frontColor, 0, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            spriteBatch.DrawString(font, text, position, frontColor, 0, origin, scale, SpriteEffects.None, 0f);
         }
     }
 }
