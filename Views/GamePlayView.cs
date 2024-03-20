@@ -71,13 +71,11 @@ namespace CS5410
                 fuelInt= m_ship.fuel;
             }
 
-            string fuelStr  = "  FUEL:  " + String.Format("{0,10:F2}", fuelInt);
-            string speedStr = "SPEED: " + String.Format("{0,10:F2}", m_ship.getMeterPerSec());
-            string angleStr = "ANGLE: " + String.Format("{0,10:F2}", m_ship.GetRotationInDegrees());
+            string fuelStr  = "  FUEL:  " + String.Format("{0,10:F2}", fuelInt) + " s";
+            string speedStr = "SPEED: " + String.Format("{0,10:F2}", m_ship.getMeterPerSec()) + " m/s";
+            string angleStr = "ANGLE: " + String.Format("{0,10:F2}", m_ship.GetRotationInDegrees()) + " degrees";
             // Assume m_font is your loaded SpriteFont
             Vector2 fuelStrSize = m_font.MeasureString(fuelStr);
-            Vector2 speedStrSize = m_font.MeasureString(speedStr);
-            Vector2 angleStrSize = m_font.MeasureString(angleStr);
             int screenWidth = m_graphics.PreferredBackBufferWidth;
             int lineHeight = 20;
             // Calculate positions

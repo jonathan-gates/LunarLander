@@ -27,19 +27,6 @@ namespace CS5410
             m_lifetimeStdDev = lifetimeStdDev;
         }
 
-        //private Particle create(Vector2 center)
-        //{
-        //    float size = (float)m_random.nextGaussian(m_sizeMean, m_sizeStdDev);
-        //    var p = new Particle(
-        //            center,
-        //            m_random.nextCircleVector(),
-        //            (float)m_random.nextGaussian(m_speedMean, m_speedStDev),
-        //            new Vector2(size, size),
-        //            new System.TimeSpan(0, 0, 0, 0, (int)(m_random.nextGaussian(m_lifetimeMean, m_lifetimeStdDev)))); ;
-
-        //    return p;
-        //}
-
         public void update(GameTime gameTime)
         {
             // Update existing particles

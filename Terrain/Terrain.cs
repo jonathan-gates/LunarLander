@@ -29,7 +29,7 @@ namespace LunarLander.Terrain
 
                 Projection = Matrix.CreateOrthographicOffCenter(
                     0, m_graphics.GraphicsDevice.Viewport.Width,
-                    m_graphics.GraphicsDevice.Viewport.Height, 0,   // doing this to get it to match the default of upper left of (0, 0)
+                    m_graphics.GraphicsDevice.Viewport.Height, 0,   
                     0.1f, 2)
             };
         }
@@ -155,19 +155,6 @@ namespace LunarLander.Terrain
                 lines.AddLine(secondSafeLine);
             }
             lines.AddLine(lastLine);
-
-            // mid point
-
-
-            // draw lines with safezone
-            //m_vertsLineStrip = new VertexPositionColor[points.Count];
-            //for (int i = 0; i < m_vertsLineStrip.Length; i++)
-            //{
-            //    m_vertsLineStrip[i].Position = points[i];
-            //    m_vertsLineStrip[i].Color = Color.White;
-            //}
-
-            //m_vertsLineStrip = lines.getPointsLines();
 
             MidpointDisplacement(lines);
 

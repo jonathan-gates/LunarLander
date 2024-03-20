@@ -51,8 +51,8 @@ namespace LunarLander
 
             m_particleSystemThrust = new ParticleSystem(
                 10, 4,
-                0.12f, 0.05f,
-                1000, 250);
+                0.25f, 0.05f,
+                750, 200);
             m_renderThrust = new ParticleSystemRenderer("Images/thrust");
             m_renderThrust.LoadContent(content);
 
