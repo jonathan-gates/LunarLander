@@ -69,6 +69,11 @@ namespace LunarLander
             else
             {
                 m_currentState.update(gameTime);
+                if (nextStateEnum == GameStateEnum.GamePlay && m_currentState is not GamePlayView)
+                {
+
+                    ((GamePlayView)m_states[nextStateEnum]).resetGameState();
+                }
                 m_currentState = m_states[nextStateEnum];
             }
 

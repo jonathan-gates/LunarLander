@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LunarLander;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -26,6 +27,8 @@ namespace CS5410
         {
             m_fontMenu = contentManager.Load<SpriteFont>("Fonts/menu");
             m_fontMenuSelect = contentManager.Load<SpriteFont>("Fonts/menu-select");
+            PersistenceManager manager = new PersistenceManager();
+            manager.loadControls(); // loads in defaults Up, left, right if they have not been made
         }
         public override GameStateEnum processInput(GameTime gameTime)
         {

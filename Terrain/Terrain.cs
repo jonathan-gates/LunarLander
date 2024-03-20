@@ -251,24 +251,27 @@ namespace LunarLander.Terrain
 
         public void Draw()
         {
-            foreach (EffectPass pass in m_effect.CurrentTechnique.Passes)
+            if (verticesToDraw != null)
             {
-                pass.Apply();
+                foreach (EffectPass pass in m_effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
 
-                m_graphics.GraphicsDevice.DrawUserPrimitives(
-                    PrimitiveType.TriangleList,
-                    verticesToDraw,
+                    m_graphics.GraphicsDevice.DrawUserPrimitives(
+                        PrimitiveType.TriangleList,
+                        verticesToDraw,
+                        0,
+                        verticesToDraw.Length / 3); // The number of triangles is the number of vertices divided by 3
+
+                    // Draw the line segments
+                    m_graphics.GraphicsDevice.DrawUserPrimitives(
+                    PrimitiveType.LineStrip,
+                    m_vertsLineStrip,
                     0,
-                    verticesToDraw.Length / 3); // The number of triangles is the number of vertices divided by 3
-
-                // Draw the line segments
-                m_graphics.GraphicsDevice.DrawUserPrimitives(
-                PrimitiveType.LineStrip,
-                m_vertsLineStrip,
-                0,
-                m_vertsLineStrip.Length - 1);
+                    m_vertsLineStrip.Length - 1);
 
 
+                }
             }
 
         }

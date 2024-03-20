@@ -52,9 +52,9 @@ namespace LunarLander
                             }
                         }
                     }
-                    catch (IsolatedStorageException e)
+                    catch (IsolatedStorageException)
                     {
-                        System.Diagnostics.Debug.WriteLine(e.ToString());
+                        
                     }
                 }
 
@@ -70,7 +70,14 @@ namespace LunarLander
                 {
                     this.loading = true;
                     // Yes, I know the result is not being saved, I dont' need it
-                    var result = finalizeLoadControlsAsync();
+                    var result = finalizeLoadControlsAsync().ContinueWith(task =>
+                    {
+                        if (m_controlsPersistence == null) // If loading didn't set up controls, set defaults
+                        {
+                            // Specify your default keys here
+                            saveControls(Keys.Up, Keys.Left, Keys.Right); // Save the default controls
+                        }
+                    }); ;
                     result.Wait();
 
                 }
@@ -99,7 +106,7 @@ namespace LunarLander
                     }
                     catch (IsolatedStorageException)
                     {
-                        m_controlsPersistence = null;
+                        
                     }
                 }
 

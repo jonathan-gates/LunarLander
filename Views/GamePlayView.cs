@@ -36,15 +36,12 @@ namespace CS5410
 
             m_contentManager = contentManager;
 
-            resetGameState();
         }
 
         public override GameStateEnum processInput(GameTime gameTime)
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
-                resetGameState();
-
                 return GameStateEnum.MainMenu;
             }
 
@@ -54,6 +51,7 @@ namespace CS5410
         public override void render(GameTime gameTime)
         {
             m_terrain.Draw();
+            
             m_spriteBatch.Begin();
 
             float scale = m_ship.collisionRadius / (m_texCircle.Width / 2);
@@ -93,9 +91,6 @@ namespace CS5410
             m_spriteBatch.DrawString(m_font, speedStr, line2Position, speedColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
             m_spriteBatch.DrawString(m_font, angleStr, line3Position, angleColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
 
-            //m_spriteBatch.DrawString(m_font, state, new Vector2(1000, 30), Color.White);
-            //m_spriteBatch.DrawString(m_font, m_ship.scale.ToString(), new Vector2(1000, 100), Color.White);
-
             m_spriteBatch.End();
         }
 
@@ -128,7 +123,7 @@ namespace CS5410
             }
         }
 
-        private void resetGameState()
+        public void resetGameState()
         {
             float shipScaleFactor = 0.1f; 
             int screenHeight = m_graphics.GraphicsDevice.Viewport.Height;

@@ -53,6 +53,7 @@ namespace CS5410
                     m_pickingNewButton = false;
                     m_waitForKeyRelease = true;
                     m_showChangeAvailable = 0;
+                    m_currentSelection = ControlsState.Thrust;
                     return GameStateEnum.MainMenu;
                 }
             }
