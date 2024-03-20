@@ -25,6 +25,7 @@ namespace LunarLander
         private float oldFuel = 20.0f;
         private bool thrustOn;
         private bool isDead;
+        private bool hasLanded;
         private bool controlable;
         private ParticleSystem m_particleSystemThrust;
         private ParticleSystem m_particleSystemCrash;
@@ -33,7 +34,7 @@ namespace LunarLander
         private PersistenceManager m_persistenceManager;
         private bool m_controlsLoaded;
 
-        public Ship(Vector2 position, Vector2 velocity, Vector2 direction, float scale, SoundEffect thrustSound, SoundEffect crashSound, ContentManager content) 
+        public Ship(Vector2 position, Vector2 velocity, Vector2 direction, float scale, SoundEffect thrustSound, SoundEffect crashSound, SoundEffect landedSound, ContentManager content) 
         { 
             this.position = position;
             this.velocity = velocity;
@@ -46,7 +47,7 @@ namespace LunarLander
 
             m_inputKeyboard = new KeyboardInput();
 
-            player = new SoundShipPlayer(thrustSound, crashSound);
+            player = new SoundShipPlayer(thrustSound, crashSound, landedSound);
 
             m_particleSystemThrust = new ParticleSystem(
                 10, 4,
@@ -155,8 +156,13 @@ namespace LunarLander
 
         public void hasWon()
         {
-            controlable= false;
-            // TODO: other stuff, stop time. Maybe return winning values
+            if (!hasLanded)
+            { 
+                hasLanded = true;
+                controlable= false;
+                // TODO: other stuff, stop time. Maybe return winning values
+                player.playLanded();
+            }
         }
 
         public void hasDied()

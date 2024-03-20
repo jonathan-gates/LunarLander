@@ -81,6 +81,12 @@
 /processorParam:Quality=Best
 /build:Sounds/crash.mp3
 
+#begin Sounds/landed.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/landed.mp3
+
 #begin Sounds/thrust.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor

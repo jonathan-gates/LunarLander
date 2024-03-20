@@ -13,16 +13,18 @@ namespace LunarLander
         private SoundEffect m_thrustSound;
         private SoundEffectInstance m_thrustSoundInstance;
         private SoundEffect m_crash;
+        private SoundEffect m_landed;
 
         private bool canPlayCrash = true;
 
 
-        public SoundShipPlayer(SoundEffect thrust, SoundEffect m_crash)
+        public SoundShipPlayer(SoundEffect thrust, SoundEffect crash, SoundEffect landed)
         { 
             this.m_thrustSound = thrust;
             this.m_thrustSoundInstance = this.m_thrustSound.CreateInstance();
             m_thrustSoundInstance.IsLooped = true;
-            this.m_crash = m_crash;
+            this.m_crash = crash;
+            this.m_landed = landed;
         }
 
         public void updateThrustSound(bool isThrusting)
@@ -44,6 +46,11 @@ namespace LunarLander
                 m_crash.Play();
                 canPlayCrash = false;
             }
+        }
+
+        public void playLanded()
+        { 
+            m_landed.Play();
         }
     }
 }

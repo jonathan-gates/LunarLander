@@ -19,6 +19,7 @@ namespace CS5410
         private Texture2D m_texCircle;
         private SoundEffect thrustSound;
         private SoundEffect crashSound;
+        private SoundEffect landedSound;
         private ContentManager m_contentManager;
         private Terrain m_terrain;
 
@@ -33,6 +34,7 @@ namespace CS5410
 
             thrustSound = contentManager.Load<SoundEffect>("Sounds/thrust");
             crashSound = contentManager.Load<SoundEffect>("Sounds/crash");
+            landedSound = contentManager.Load<SoundEffect>("Sounds/landed");
 
             m_contentManager = contentManager;
 
@@ -129,7 +131,7 @@ namespace CS5410
             int screenHeight = m_graphics.GraphicsDevice.Viewport.Height;
             float shipHeight = m_texShip.Height;
             float scale = (screenHeight * shipScaleFactor) / shipHeight;
-            m_ship = new Ship(new Vector2(50, 50), new Vector2(0, 0), new Vector2(1, 0), scale, thrustSound, crashSound, m_contentManager);
+            m_ship = new Ship(new Vector2(50, 50), new Vector2(0, 0), new Vector2(1, 0), scale, thrustSound, crashSound, landedSound, m_contentManager);
             m_terrain.GenerateTerrain(scale, true);
         }
 
