@@ -52,8 +52,8 @@ namespace LunarLander.Terrain
             int yEndRange = (int)(m_graphics.PreferredBackBufferHeight * 0.75);
             int xLeftSafeZone = m_graphics.PreferredBackBufferWidth - (int)(m_graphics.PreferredBackBufferWidth * 0.85);
             int xRightSafeZone = (int)(m_graphics.PreferredBackBufferWidth * 0.85);
-            int SAFE_ZONE_LENGTH = (int)(200 * scale);
-            int MIN_DISTANCE_BETWEEN = (int)(200 * scale);
+            int SAFE_ZONE_LENGTH = (int)(m_graphics.PreferredBackBufferWidth * 0.11 * scale);
+            int MIN_DISTANCE_BETWEEN = (int)(m_graphics.PreferredBackBufferWidth * 0.11 * scale);
 
             if (!firstLevel)
             {
