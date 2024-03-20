@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace CS5410
 {
@@ -47,9 +48,21 @@ namespace CS5410
 
             Vector2 screenSize = new Vector2(m_graphics.GraphicsDevice.Viewport.Width, m_graphics.GraphicsDevice.Viewport.Height);
             Vector2 position = screenSize / 2;
+
+            // scale to fit width
+            float baseScreenWidth = 1920; // Assume 1920 is the base width you designed for
+            float scalingFactor = m_graphics.GraphicsDevice.Viewport.Width / baseScreenWidth;
+            float textScale = scalingFactor;
+            Vector2 textSize = m_font.MeasureString(creditsText) * textScale;
+            if (textSize.X > m_graphics.GraphicsDevice.Viewport.Width)
+            {
+                // The text is too wide to fit on the screen, reduce the scale further
+                textScale *= m_graphics.GraphicsDevice.Viewport.Width / textSize.X;
+            }
+
             int screenHeight = m_graphics.GraphicsDevice.Viewport.Height;
             float scale = (float)((screenHeight * 0.1) / 110);
-            drawOutlineText(m_spriteBatch, m_font, creditsText, Color.Black, Color.White, position, scale);
+            drawOutlineText(m_spriteBatch, m_font, creditsText, Color.Black, Color.White, position, textScale);
             m_spriteBatch.End();
         }
 
