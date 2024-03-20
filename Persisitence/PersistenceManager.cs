@@ -77,8 +77,9 @@ namespace LunarLander
                             // Specify your default keys here
                             saveControls(Keys.Up, Keys.Left, Keys.Right); // Save the default controls
                         }
+
                     }); 
-                    result.Wait();
+                    //result.Wait(); // Cannot use with ContinueWith
 
                 }
             }

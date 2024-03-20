@@ -9,7 +9,6 @@ namespace CS5410
     public class CreditsView : GameStateView
     {
         private SpriteFont m_font;
-        private const string MESSAGE = "Credits View";
 
         public override void loadContent(ContentManager contentManager)
         {
