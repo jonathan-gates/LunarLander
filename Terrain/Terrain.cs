@@ -230,7 +230,7 @@ namespace LunarLander.Terrain
                     }
                 }
                 lines = new Lines(temp_lines);
-                s *= 0.59f;
+                s *= 0.65f;
             }
             m_vertsLineStrip = lines.getPointsLines();
             m_lines = lines.m_lines;
