@@ -132,19 +132,56 @@ namespace CS5410
             {
                 string transitionText = "Next Level in: " + m_countDown.ToString("F2");
                 Vector2 position = screenSize / 2;
-                drawOutlineText(m_spriteBatch, m_font, transitionText, Color.Black, Color.White, position, m_ship.scale);
+
+                // scale to fit width
+                float baseScreenWidth = 1920; // Assume 1920 is the base width you designed for
+                float scalingFactor = m_graphics.GraphicsDevice.Viewport.Width / baseScreenWidth;
+                float textScale = Math.Min(scalingFactor, m_ship.scale);
+                Vector2 textSize = m_font.MeasureString(transitionText) * textScale;
+                if (textSize.X > m_graphics.GraphicsDevice.Viewport.Width)
+                {
+                    // The text is too wide to fit on the screen, reduce the scale further
+                    textScale *= m_graphics.GraphicsDevice.Viewport.Width / textSize.X;
+                }
+
+                drawOutlineText(m_spriteBatch, m_font, transitionText, Color.Black, Color.White, position, textScale);
             }
             if (levelTwoWon)
             {
                 string transitionText = "Your score of " + score.ToString("F3") + " has been saved! Press ESC to return to Main Menu.";
                 Vector2 position = screenSize / 2;
-                drawOutlineText(m_spriteBatch, m_font, transitionText, Color.Black, Color.White, position, m_ship.scale);
+
+                // scale to fit width
+                float baseScreenWidth = 1920; // Assume 1920 is the base width you designed for
+                float scalingFactor = m_graphics.GraphicsDevice.Viewport.Width / baseScreenWidth;
+                float textScale = Math.Min(scalingFactor, m_ship.scale);
+
+                Vector2 textSize = m_font.MeasureString(transitionText) * textScale;
+                if (textSize.X > m_graphics.GraphicsDevice.Viewport.Width)
+                {
+                    // The text is too wide to fit on the screen, reduce the scale further
+                    textScale *= m_graphics.GraphicsDevice.Viewport.Width / textSize.X;
+                }
+
+                drawOutlineText(m_spriteBatch, m_font, transitionText, Color.Black, Color.White, position, textScale);
             }
             if (m_ship.isDead)
             {
                 string transitionText = "Better luck next time! Press ESC to return to Main Menu.";
                 Vector2 position = screenSize / 2;
-                drawOutlineText(m_spriteBatch, m_font, transitionText, Color.Black, Color.White, position, m_ship.scale);
+
+                // scale to fit width
+                float baseScreenWidth = 1920; // Assume 1920 is the base width you designed for
+                float scalingFactor = m_graphics.GraphicsDevice.Viewport.Width / baseScreenWidth;
+                float textScale = Math.Min(scalingFactor, m_ship.scale);
+                Vector2 textSize = m_font.MeasureString(transitionText) * textScale;
+                if (textSize.X > m_graphics.GraphicsDevice.Viewport.Width)
+                {
+                    // The text is too wide to fit on the screen, reduce the scale further
+                    textScale *= m_graphics.GraphicsDevice.Viewport.Width / textSize.X;
+                }
+
+                drawOutlineText(m_spriteBatch, m_font, transitionText, Color.Black, Color.White, position, textScale);
             }
 
             m_spriteBatch.End();
