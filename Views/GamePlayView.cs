@@ -111,14 +111,15 @@ namespace CS5410
 
 
             // Backdrop
-            float maxWidth = m_graphics.GraphicsDevice.Viewport.Width * 0.25f;
+            //float maxWidth = m_graphics.GraphicsDevice.Viewport.Width * 0.25f;
+            float maxWidth = Math.Max(fuelStrSize.X * 1.20f, m_graphics.GraphicsDevice.Viewport.Width * 0.25f);
             float totalHeight = m_graphics.GraphicsDevice.Viewport.Height * 0.075f; 
-            Vector2 backdropPosition = new Vector2(screenWidth - maxWidth / 2 - xOffset - (10 * m_ship.scale), yOffset); // Size of the backdrop
-            Vector2 backdropSize = new Vector2(maxWidth - ( 175 * m_ship.scale), totalHeight);
+            Vector2 backdropPosition = new Vector2(line1Position.X - fuelStrSize.X / 2 + xOffset, yOffset); // Size of the backdrop
+            Vector2 backdropSize = new Vector2(maxWidth - (m_graphics.GraphicsDevice.Viewport.Width / 11 * m_ship.scale), totalHeight);
             Texture2D pixel = new Texture2D(m_graphics.GraphicsDevice, 1, 1);
             pixel.SetData(new[] { Color.White }); // A white pixel
             Color backdropColor = new Color(0, 0, 0, 200);
-            m_spriteBatch.Draw(pixel, new Rectangle((int)backdropPosition.X - 50, (int)backdropPosition.Y, (int)backdropSize.X, (int)backdropSize.Y), backdropColor);
+            m_spriteBatch.Draw(pixel, new Rectangle((int)backdropPosition.X - (int)(m_graphics.GraphicsDevice.Viewport.Width /38.4), (int)backdropPosition.Y, (int)backdropSize.X, (int)backdropSize.Y), backdropColor);
 
 
             drawOutlineText(m_spriteBatch, m_font, fuelStr, Color.Black, fuelColor, line1Position, m_ship.scale * 0.45f);
