@@ -30,25 +30,50 @@ namespace CS5410
         {
             m_spriteBatch.Begin();
 
-            string creditsText = "Credits:\n";
+            string creditsText = "                                       Credits:\n";
 
-            creditsText += "Created by Jonathan Gates";
-            creditsText += "Ship Texture: https://opengameart.org/content/rocket";
-            creditsText += "Thrust and Crash Particles: https://opengameart.org/content/smoke-particle-assets";
-            creditsText += "Crash Sound: https://opengameart.org/content/big-explosion";
-            creditsText += "Thrust Sound: https://opengameart.org/content/fire-loop";
-            creditsText += "Landing Sound: https://opengameart.org/content/win-sound-effect";
+            creditsText += "                    Created by Jonathan Gates\n";
+            creditsText += "Ship Texture:" +
+                "\n        https://opengameart.org/content/rocket\n";
+            creditsText += "Thrust and Crash Particles: " +
+                "\n       https://opengameart.org/content/smoke-particle-assets\n";
+            creditsText += "Crash Sound: " +
+                "\n       https://opengameart.org/content/big-explosion\n";
+            creditsText += "Thrust Sound: " +
+                "\n       https://opengameart.org/content/fire-loop\n";
+            creditsText += "Landing Sound: " +
+                "\n       https://opengameart.org/content/win-sound-effect";
 
             Vector2 screenSize = new Vector2(m_graphics.GraphicsDevice.Viewport.Width, m_graphics.GraphicsDevice.Viewport.Height);
             Vector2 textSize = m_font.MeasureString(creditsText);
             Vector2 position = (screenSize - textSize) / 2;
-            m_spriteBatch.DrawString(m_font, creditsText, position, Color.White);
+            drawOutlineText(m_spriteBatch, m_font, creditsText, Color.Black, Color.White, position, 1.0f);
 
             m_spriteBatch.End();
         }
 
         public override void update(GameTime gameTime)
         {
+        }
+
+        protected static void drawOutlineText(SpriteBatch spriteBatch, SpriteFont font, string text, Color outlineColor, Color frontColor, Vector2 position, float scale)
+        {
+            const float PIXEL_OFFSET = 1.0f;
+            //
+            // Offset to the upper left and lower right - faster, but not as good
+            //spriteBatch.DrawString(font, text, position - new Vector2(PIXEL_OFFSET * scale, PIXEL_OFFSET * scale), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
+            //spriteBatch.DrawString(font, text, position + new Vector2(PIXEL_OFFSET * scale, PIXEL_OFFSET * scale), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
+
+            //
+            // Offset in each of left,right, up, down directions - slower, but good
+            spriteBatch.DrawString(font, text, position - new Vector2(PIXEL_OFFSET * scale, 0), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
+            spriteBatch.DrawString(font, text, position + new Vector2(PIXEL_OFFSET * scale, 0), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
+            spriteBatch.DrawString(font, text, position - new Vector2(0, PIXEL_OFFSET * scale), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
+            spriteBatch.DrawString(font, text, position + new Vector2(0, PIXEL_OFFSET * scale), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
+
+            //
+            // This sits inside the text rendering done just above
+            spriteBatch.DrawString(font, text, position, frontColor, 0, Vector2.Zero, scale, SpriteEffects.None, 0f);
         }
     }
 }

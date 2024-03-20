@@ -104,9 +104,11 @@ namespace CS5410
             Color fuelColor = fuelInt > 0 ? Color.Green : Color.White;
             Color speedColor = m_ship.getMeterPerSec() <= 2.0f ? Color.Green : Color.White;
             Color angleColor = (m_ship.GetRotationInDegrees() <= 5 || m_ship.GetRotationInDegrees() >= 355) ? Color.Green : Color.White;
-            m_spriteBatch.DrawString(m_font, fuelStr, line1Position, fuelColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
-            m_spriteBatch.DrawString(m_font, speedStr, line2Position, speedColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
-            m_spriteBatch.DrawString(m_font, angleStr, line3Position, angleColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
+
+            drawOutlineText(m_spriteBatch, m_font, fuelStr, Color.Black, fuelColor, line1Position, 0.45f);
+            drawOutlineText(m_spriteBatch, m_font, speedStr, Color.Black, speedColor, line2Position, 0.45f);
+            drawOutlineText(m_spriteBatch, m_font, angleStr, Color.Black, angleColor, line3Position, 0.45f);
+
 
             Vector2 screenSize = new Vector2(m_graphics.GraphicsDevice.Viewport.Width, m_graphics.GraphicsDevice.Viewport.Height);
             if (m_inTransition)
@@ -114,21 +116,21 @@ namespace CS5410
                 string transitionText = "Next Level in: " + m_countDown.ToString("F2");
                 Vector2 textSize = m_font.MeasureString(transitionText);
                 Vector2 position = (screenSize - textSize) / 2;
-                m_spriteBatch.DrawString(m_font, transitionText, position, Color.White);
+                drawOutlineText(m_spriteBatch, m_font, transitionText, Color.Black, Color.White, position, 1.0f);
             }
             if (levelTwoWon)
             {
                 string transitionText = "Your score of " + score.ToString("F3") + " has been saved! Press ESC to return to Main Menu.";
                 Vector2 textSize = m_font.MeasureString(transitionText);
                 Vector2 position = (screenSize - textSize) / 2;
-                m_spriteBatch.DrawString(m_font, transitionText, position, Color.White);
+                drawOutlineText(m_spriteBatch, m_font, transitionText, Color.Black, Color.White, position, 1.0f);
             }
             if (m_ship.isDead)
             {
                 string transitionText = "Better luck next time! Press ESC to return to Main Menu.";
                 Vector2 textSize = m_font.MeasureString(transitionText);
                 Vector2 position = (screenSize - textSize) / 2;
-                m_spriteBatch.DrawString(m_font, transitionText, position, Color.White);
+                drawOutlineText(m_spriteBatch, m_font, transitionText, Color.Black, Color.White, position, 1.0f);
             }
 
             m_spriteBatch.End();
@@ -228,6 +230,26 @@ namespace CS5410
             {
                 m_persistenceManager.loadHighScores();
             }
+        }
+
+        protected static void drawOutlineText(SpriteBatch spriteBatch, SpriteFont font, string text, Color outlineColor, Color frontColor, Vector2 position, float scale)
+        {
+            const float PIXEL_OFFSET = 1.0f;
+            //
+            // Offset to the upper left and lower right - faster, but not as good
+            //spriteBatch.DrawString(font, text, position - new Vector2(PIXEL_OFFSET * scale, PIXEL_OFFSET * scale), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
+            //spriteBatch.DrawString(font, text, position + new Vector2(PIXEL_OFFSET * scale, PIXEL_OFFSET * scale), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
+
+            //
+            // Offset in each of left,right, up, down directions - slower, but good
+            spriteBatch.DrawString(font, text, position - new Vector2(PIXEL_OFFSET * scale, 0), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
+            spriteBatch.DrawString(font, text, position + new Vector2(PIXEL_OFFSET * scale, 0), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
+            spriteBatch.DrawString(font, text, position - new Vector2(0, PIXEL_OFFSET * scale), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
+            spriteBatch.DrawString(font, text, position + new Vector2(0, PIXEL_OFFSET * scale), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
+
+            //
+            // This sits inside the text rendering done just above
+            spriteBatch.DrawString(font, text, position, frontColor, 0, Vector2.Zero, scale, SpriteEffects.None, 0f);
         }
 
     }
